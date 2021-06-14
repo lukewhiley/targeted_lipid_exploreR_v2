@@ -7,7 +7,7 @@ loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages, package_list)
 
 # load custom functions from github
-lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-class_sumR_function_v1.r") %>% content(as = "text")
+lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/functions/2021-LGW-lipidomics-class_sumR_function_v1.r") %>% content(as = "text")
 eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
 rm(lipidomics_class_sum_function)
 
@@ -132,31 +132,31 @@ run_order <- individual_lipid_data$run_order
 ##################### Run the rest of the QC exploreR sub-scripts from here
 
 # SIL check - sums the intensity of all stable isotope labeled internal standards, visualizes the result. If IS have been added correctly should be within x deviations from the median. Allows visualization of outliers
-summed_SIL_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script_v1.r") %>% 
+summed_SIL_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script_v1.r") %>% 
   content(as = "text")
 eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
 rm(summed_SIL_checkR_script)
 
 # TIC check - sums the intensity of all target lipids, visualizes the result. If sample has been added to the well correctly should be within x deviations from the median. Allows visualization of outliers.
-summed_TIC_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script_v1.R") %>% 
+summed_TIC_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script_v1.R") %>% 
   content(as = "text")
 eval(parse(text = summed_TIC_checkR_script), envir = .GlobalEnv)
 rm(summed_TIC_checkR_script)
 
 #intensity threshold filter
-intensity_threshold_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script_v1.R") %>% content(as = "text")
+intensity_threshold_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script_v1.R") %>% content(as = "text")
 eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
 rm(intensity_threshold_checkR_script)
 
 # Review individual SIL internal standards 
 # Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_normaliseR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-internal_standard_normaliseR_v1.r") %>% 
+LTR_SIL_normaliseR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-internal_standard_normaliseR_v1.r") %>% 
   content(as = "text")
 eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
 #rm(LTR_SIL_normaliseR_script)
 
 # Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_visualizeR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R") %>% 
+LTR_SIL_visualizeR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R") %>% 
   content(as = "text")
 eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
 ltr_rsd_1 <- ltr_rsd 
@@ -165,7 +165,7 @@ normalized_check_class_p_1 <- normalized_check_class_p
 #rm(LTR_SIL_checkR_script)
 
 # Produce a PCA to QC data. Allows for visualization of LTR sample clustering
-PCA_QC_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script_v1.r") %>% content(as = "text")
+PCA_QC_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script_v1.r") %>% content(as = "text")
 eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
 pca_scale_used_1 <- scale_used
 pca_p_1 <- pca_p
@@ -185,7 +185,7 @@ if(signal_drift_choice == "yes"){
 
 while(signal_drift_continue != "continue"){
 
-signal_drift_correct_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-signal_driftR_script_v1.r") %>% content(as = "text")
+signal_drift_correct_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-signal_driftR_script_v1.r") %>% content(as = "text")
 eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
 
 #replot with corrected data
