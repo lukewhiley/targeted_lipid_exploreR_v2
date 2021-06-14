@@ -1,7 +1,7 @@
 # produces a PCA of the normalised sampels
 
 #source PCA QC function from guthub
-lipidomics_PCA_QC_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/metabolomics_code/main/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-PCA_QC_checkR_function.r") %>% content(as = "text")
+lipidomics_PCA_QC_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-PCA_QC_checkR_function.r") %>% content(as = "text")
 eval(parse(text = lipidomics_PCA_QC_function), envir = .GlobalEnv)
 rm(lipidomics_PCA_QC_function)
 
