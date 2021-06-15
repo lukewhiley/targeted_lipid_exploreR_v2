@@ -1,6 +1,6 @@
-package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr")
-loaded_packages <- lapply(package_list, require, character.only = TRUE)
-rm(loaded_packages)
+#package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr")
+#loaded_packages <- lapply(package_list, require, character.only = TRUE)
+#rm(loaded_packages)
 
 dlg_message("Welcome to skylineR! :-)", type = 'ok')
 
@@ -16,7 +16,7 @@ transition_metadata_headers <- colnames(transition_metadata)
 transition_metadata <- clean_names(transition_metadata)
 metabolite_target_list <- transition_metadata %>% select(precursor_name)
 
-library(MSnbase)
+#library(MSnbase)
 dlg_message("Select the folder containing the mzML files", type = 'ok'); mzML_directory <- rstudioapi::selectDirectory()
 #dlg_message("Select the mzML file created from the FIRST LTR from the run to read into R", type = 'ok'); test_spectra_1 <- MSnbase::readSRMData(file.choose(.))
 #dlg_message("Select the mzML file created from the LAST LTR from the run to read into R", type = 'ok'); test_spectra_2 <- MSnbase::readSRMData(file.choose(.))
@@ -25,9 +25,9 @@ mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %
 mzML_filelist_idx <- c(seq(1, nrow(mzML_filelist), by = floor(nrow(mzML_filelist)/4)), nrow(mzML_filelist))
 mzML_filelist_crop <- mzML_filelist[mzML_filelist_idx,]
 
-pb <- progress_bar$new(total = 100)
+#pb <- progress_bar$new(total = 100)
 for(mzML_idx in 1:nrow(mzML_filelist_crop)){
-  pb$tick()
+  #pb$tick()
   test_spectra <- MSnbase::readSRMData(paste0(mzML_directory, "/", mzML_filelist_crop$value[mzML_idx]))
   
   rt_find <- NULL
