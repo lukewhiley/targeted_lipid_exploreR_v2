@@ -40,7 +40,7 @@ for(mzML_idx in 1:nrow(mzML_filelist_crop)){
     scans_in_window <- length(test_spectra[transition_idx,]@rtime)
     #scans_in_window_2 <- length(test_spectra_1[transition_idx,]@rtime)
     apex_rt <- test_spectra[transition_idx,]@rtime[max_intensity_idx]
-    precursor_name <- results_1$precursor_name[which(results_1$precursor_mz == precursor_mz & results_1$product_mz == product_mz)] %>% unique()
+    precursor_name <- transition_metadata$precursor_name[which(transition_metadata$precursor_mz == precursor_mz & transition_metadata$product_mz == product_mz)] %>% unique()
     rt_find <- rbind(rt_find, c(precursor_name, round(apex_rt,2)))
   }
   
