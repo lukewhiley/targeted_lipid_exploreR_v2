@@ -43,7 +43,7 @@ loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages)
 
 # Source R script from Github
-skylineR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-skylineR_script_v1.r") %>% content(as = "text")
+skylineR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-skylineR_script_v1.r") %>% content(as = "text")
 
 eval(parse(text = skylineR_script), envir = .GlobalEnv)
 
