@@ -16,7 +16,7 @@ transition_metadata_headers <- colnames(transition_metadata)
 transition_metadata <- clean_names(transition_metadata)
 metabolite_target_list <- transition_metadata %>% select(precursor_name)
 
-#library(MSnbase)
+library(MSnbase)
 dlg_message("Select the folder containing the mzML files", type = 'ok'); mzML_directory <- rstudioapi::selectDirectory()
 #dlg_message("Select the mzML file created from the FIRST LTR from the run to read into R", type = 'ok'); test_spectra_1 <- MSnbase::readSRMData(file.choose(.))
 #dlg_message("Select the mzML file created from the LAST LTR from the run to read into R", type = 'ok'); test_spectra_2 <- MSnbase::readSRMData(file.choose(.))
