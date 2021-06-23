@@ -97,7 +97,7 @@ eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
 rm(lipidomics_class_sum_function)
 
 #PCA function
-lipidomics_PCA_QC_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-PCA_QC_checkR_function_v2.r")) %>% 
+lipidomics_PCA_QC_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-PCA_QC_checkR_function_v1.r")) %>% 
                                     content(as = "text")
 eval(parse(text = lipidomics_PCA_QC_function), envir = .GlobalEnv)
 rm(lipidomics_PCA_QC_function)
