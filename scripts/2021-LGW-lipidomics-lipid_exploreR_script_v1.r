@@ -13,9 +13,8 @@
 # 
 # dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
 # 
-# dlg_message("Please select your project folder", type = 'ok')
 
-project_dir <- rstudioapi::selectDirectory() # save project directory root location
+dlg_message("Please select your project folder", type = 'ok'); project_dir <- rstudioapi::selectDirectory() # save project directory root location
 setwd(project_dir) # switch the project directory
 
 # create a new directory to store html widgets
