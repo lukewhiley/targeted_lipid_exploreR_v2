@@ -47,8 +47,11 @@ package_list <- c("plyr", "tidyverse", "janitor", "httr")
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages)
 
+# set parent github URL
+parent_github_url <- "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/development_branch"
+
 # Source R script from Github
-skylineR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/development_branch/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-skylineR_script.r") %>% content(as = "text")
+skylineR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-skylineR_script.r") %>% content(as = "text")
 
 eval(parse(text = skylineR_script), envir = .GlobalEnv)
 
