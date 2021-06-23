@@ -38,6 +38,11 @@ REQUIREMENTS:
 
 
 ```{r, skylineR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+# reset environment
+if(length(names(sessionInfo()$otherPkgs)) > 0){
+invisible(lapply(paste0('package:',names(sessionInfo()$otherPkgs)),detach,character.only=TRUE, unload=TRUE))
+}
+
 package_list <- c("plyr", "tidyverse", "janitor", "httr")
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages)
@@ -64,6 +69,10 @@ This notebook is designed to explore the dataset and QC check it. The script gen
   -> read in data
 
 ```{r, lipid_exploreR packages and functions,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+# reset environment
+if(length(names(sessionInfo()$otherPkgs)) > 0){
+invisible(lapply(paste0('package:',names(sessionInfo()$otherPkgs)),detach,character.only=TRUE, unload=TRUE))
+}
 
 # load packages
 package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget')
@@ -74,7 +83,7 @@ rm(loaded_packages, package_list)
 dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
 
 # load custom functions from github
-lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/development_branch/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-class_sumR_function.r") %>% content(as = "text")
+lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/development_branch/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-class_sumR_function_v1.r") %>% content(as = "text")
 eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
 rm(lipidomics_class_sum_function)
 
