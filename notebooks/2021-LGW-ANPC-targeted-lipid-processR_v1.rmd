@@ -97,7 +97,7 @@ eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
 rm(lipidomics_class_sum_function)
 
 #PCA function
-lipidomics_PCA_QC_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-PCA_QC_checkR_function.r")) %>% 
+lipidomics_PCA_QC_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-PCA_QC_checkR_function_v2.r")) %>% 
                                     content(as = "text")
 eval(parse(text = lipidomics_PCA_QC_function), envir = .GlobalEnv)
 rm(lipidomics_PCA_QC_function)
@@ -205,7 +205,7 @@ Signal drift correction using the statTarget package:
   -> user has the choice of Random Forrest (RF) or Loess correction
   -> signal drift images are output into a folder in the project directory
   
-```{r, PCA checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+```{r, signal drift checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
 signal_drift_choice <- "blank"
 signal_drift_continue <- "change"
