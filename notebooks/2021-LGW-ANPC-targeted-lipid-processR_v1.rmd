@@ -58,20 +58,175 @@ Section 2 - lipid_exploreR
 
 This notebook is designed to explore the dataset and QC check it. The script generates a report and a final dataset that can be used for data modeling.
 
-```{r, lipid_exploreR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+1. prepare project: 
+  -> load packages and functions
+  -> prepare project folder
+  -> read in data
+
+```{r, lipid_exploreR packages and functions,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+#welcome message
+dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
+
+# load packages
 package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget')
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages, package_list)
 
-#lipidomics_functions_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/metabolomics_code/main/ANPC_lipidomics_tools/functions/LGW_function_lipidomics_tools.r") %>% content(as = "text")
-#eval(parse(text = lipidomics_functions_script), envir = .GlobalEnv)
-#rm(lipidomics_functions_script)
+# load custom functions from github
+lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-class_sumR_function.r") %>% content(as = "text")
+eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
+rm(lipidomics_class_sum_function)
 
-# Source R script from Github and prepare data - imports data from section 1. Lipidomics peak picking from skyline
+# download and parse data preparation script
+
 lipid_exploreR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-lipid_exploreR_script.r") %>% content(as = "text")
 eval(parse(text = lipid_exploreR_script), envir = .GlobalEnv)
 rm(lipid_exploreR_script)
 
+
+```
+
+QC check 1:
+  -> Selects and sums all of the stable isotope labeled (SIL) internal standards 
+  -> creates interactive plot of the result
+  -> If SIL internal standards have been added correctly they should be within x% from the median. 
+  -> Default is 50% cut-off - edit as appropriate
+  
+
+```{r, summed_SIL_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+summed_SIL_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script.r") %>% 
+  content(as = "text")
+eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
+rm(summed_SIL_checkR_script)
+
+```
+
+QC check 2:
+  -> Selects and sums all of the lipid targets that are not SIL internal standards 
+  -> creates interactive plot of the result
+  -> If sample has had correct volume added to plate wells they should be within x% from the median. 
+  -> Default is 50% cut-off - edit as appropriate
+  -> used for obvious outliers
+  
+```{r, summed_TIC_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+summed_TIC_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script.R") %>% 
+  content(as = "text")
+eval(parse(text = summed_TIC_checkR_script), envir = .GlobalEnv)
+rm(summed_TIC_checkR_script)
+
+```
+
+
+QC check 3:
+  -> Intensity check for individual lipids
+  -> Checks all lipid targets for any samples that fall below signal intensity threshold
+  -> Default is 2500 counts, but can be adjusted as required
+  -> Script provides options to check in x% of samples/LTRs
+  -> Recommended default is lipid must be >2500 counts in 50% of LTR samples
+  
+```{r, intensity checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+intensity_threshold_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script.R") %>% content(as = "text")
+eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
+rm(intensity_threshold_checkR_script)
+
+```
+
+LTR normalization:
+  -> Creates response ratio of target lipid with internal standard of choice
+  -> Requires template describing IS target relationships with following column headers
+    -> 
+  -> Evaluates target/internal standard ratios in QC samples (for ANPC uses LTR)
+  -> Creates interactive visualizations of summed ratios (both total dataset and per lipid class)
+  
+```{r, SIL internal standard normalizeR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+LTR_SIL_normaliseR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-internal_standard_normaliseR.r") %>% 
+  content(as = "text")
+eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
+rm(LTR_SIL_normaliseR_script)
+
+# Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
+LTR_SIL_visualizeR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-internal_standard_visualizeR.R") %>% 
+  content(as = "text")
+eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
+rm(LTR_SIL_checkR_script)
+
+#keep plots for report generation
+ltr_rsd_1 <- ltr_rsd 
+normalized_check_p_1 <- normalized_check_p
+normalized_check_class_p_1 <- normalized_check_class_p
+
+```
+
+Create PCA visualizations:
+  -> Creates interactive PCA visualizations of the data
+  
+```{r, PCA checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+PCA_QC_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script.r") %>% content(as = "text")
+eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
+pca_scale_used_1 <- scale_used
+pca_p_1 <- pca_p
+
+```
+
+
+Signal drift correction using the statTarget package:
+  -> Performs mass spectrometry signal intensity drift correction
+  -> user has the choice of Random Forrest (RF) or Loess correction
+  -> signal drift images are output into a folder in the project directory
+  
+```{r, PCA checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+signal_drift_choice <- "blank"
+signal_drift_continue <- "change"
+while(signal_drift_choice != "yes"& signal_drift_choice != "no"){
+  signal_drift_choice <- dlgInput("Do you want to use a signal drift correction?", "yes/no")$res
+}
+
+if(signal_drift_choice == "yes"){
+
+while(signal_drift_continue != "continue"){
+
+signal_drift_correct_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-signal_driftR_script.r") %>% content(as = "text")
+eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
+
+#replot with corrected data
+
+replot_answer <- "blank"
+while(replot_answer != "yes" & replot_answer != "no"){
+  replot_answer <- dlgInput("Do you want to replot the visualizations with the corrected data?", "yes/no")$res
+}
+
+if(replot_answer == "yes"){
+  ratio_data <- final_corrected_data
+  eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
+  ltr_rsd_2 <- ltr_rsd 
+  normalized_check_p_2 <- normalized_check_p
+  normalized_check_class_p_2 <- normalized_check_class_p
+  
+  final_individual_lipid_data <- ratio_data
+  final_class_lipid_data <- create_lipid_class_data_summed(final_individual_lipid_data)
+  eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
+  pca_scale_used_2 <- scale_used
+  pca_p_2 <- pca_p
+}
+
+while(signal_drift_continue != "change"& signal_drift_continue != "continue"){
+  signal_drift_continue <- dlgInput("Are you happy with the drift correction or do you want to change", "continue/change")$res
+}
+}
+}
+
+```
+
+Produce the final HTML QC report
+  -> script produces a final report that is interactive and can be used to evaluate the quality of the data
+  
+```{r, lipid_exploreR report export,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 # produce a final report
 fileConn<-file(paste(project_dir_html, "/ANPC_lipidomics-report-generatoR.r", sep=""))
 writeLines(GET("https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/scripts/2021-LGW-lipidomics-report_generatoR_script.R") %>% 
@@ -98,7 +253,6 @@ write_csv(final_corrected_class_lipid_data,
 
 dlg_message("Lipidomics pre-processing and QC complete. Thanks for using skylineR and lipid exploreR. TTFN.", type = 'ok')
 dlg_message("PS. an official html report can be found in the project folder", type = 'ok')
-
 
 ```
 
