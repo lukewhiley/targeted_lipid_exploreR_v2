@@ -1,10 +1,5 @@
 # produces a PCA of the normalised sampels
 
-#source PCA QC function from guthub
-lipidomics_PCA_QC_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/functions/2021-LGW-lipidomics-PCA_QC_checkR_function_v1.r") %>% content(as = "text")
-eval(parse(text = lipidomics_PCA_QC_function), envir = .GlobalEnv)
-rm(lipidomics_PCA_QC_function)
-
 #label data
 final_individual_lipid_data$sample_class <- "sample"
 final_individual_lipid_data$sample_class[grep("LTR", final_individual_lipid_data$sampleID)] <- "LTR"

@@ -1,21 +1,20 @@
-######### read in data etc
+# ######### read in data etc
+# 
+# # # load required packages not required if running as part of the notebook
+# 
+# package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget')
+# loaded_packages <- lapply(package_list, require, character.only = TRUE)
+# rm(loaded_packages, package_list)
+# 
+# # load custom functions from github
+# lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/ANPC_lipidomics_tools/functions/2021-LGW-lipidomics-class_sumR_function.r") %>% content(as = "text")
+# eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
+# rm(lipidomics_class_sum_function)
+# 
+# dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
+# 
 
-# # load required packages not required if running as part of the notebook
-
-package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget')
-loaded_packages <- lapply(package_list, require, character.only = TRUE)
-rm(loaded_packages, package_list)
-
-# load custom functions from github
-lipidomics_class_sum_function <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/functions/2021-LGW-lipidomics-class_sumR_function_v1.r") %>% content(as = "text")
-eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
-rm(lipidomics_class_sum_function)
-
-dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
-
-dlg_message("Please select your project folder", type = 'ok')
-
-project_dir <- rstudioapi::selectDirectory() # save project directory root location
+dlg_message("Please select your project folder", type = 'ok'); project_dir <- rstudioapi::selectDirectory() # save project directory root location
 setwd(project_dir) # switch the project directory
 
 # create a new directory to store html widgets
@@ -128,92 +127,4 @@ class_lipid_data <- create_lipid_class_data_summed(individual_lipid_data)
 new_project_run_order <- new_project_run_order %>% filter(!grepl("conditioning", sampleID))
 plateID <- individual_lipid_data$plateID
 run_order <- individual_lipid_data$run_order
-
-##################### Run the rest of the QC exploreR sub-scripts from here
-
-# SIL check - sums the intensity of all stable isotope labeled internal standards, visualizes the result. If IS have been added correctly should be within x deviations from the median. Allows visualization of outliers
-summed_SIL_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script_v1.r") %>% 
-  content(as = "text")
-eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
-rm(summed_SIL_checkR_script)
-
-# TIC check - sums the intensity of all target lipids, visualizes the result. If sample has been added to the well correctly should be within x deviations from the median. Allows visualization of outliers.
-summed_TIC_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script_v1.R") %>% 
-  content(as = "text")
-eval(parse(text = summed_TIC_checkR_script), envir = .GlobalEnv)
-rm(summed_TIC_checkR_script)
-
-#intensity threshold filter
-intensity_threshold_checkR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script_v1.R") %>% content(as = "text")
-eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
-rm(intensity_threshold_checkR_script)
-
-# Review individual SIL internal standards 
-# Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_normaliseR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-internal_standard_normaliseR_v1.r") %>% 
-  content(as = "text")
-eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
-#rm(LTR_SIL_normaliseR_script)
-
-# Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_visualizeR_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R") %>% 
-  content(as = "text")
-eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
-ltr_rsd_1 <- ltr_rsd 
-normalized_check_p_1 <- normalized_check_p
-normalized_check_class_p_1 <- normalized_check_class_p
-#rm(LTR_SIL_checkR_script)
-
-# Produce a PCA to QC data. Allows for visualization of LTR sample clustering
-PCA_QC_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script_v1.r") %>% content(as = "text")
-eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
-pca_scale_used_1 <- scale_used
-pca_p_1 <- pca_p
-#rm(PCA_QC_script)
-
-#perform signal correction and repeat plots
-
-
-signal_drift_choice <- "blank"
-signal_drift_continue <- "change"
-while(signal_drift_choice != "yes"& signal_drift_choice != "no"){
-  signal_drift_choice <- dlgInput("Do you want to use a signal drift correction?", "yes/no")$res
-}
-
-if(signal_drift_choice == "yes"){
-
-
-while(signal_drift_continue != "continue"){
-
-signal_drift_correct_script <- GET(url = "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main/scripts/2021-LGW-lipidomics-signal_driftR_script_v1.r") %>% content(as = "text")
-eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
-
-#replot with corrected data
-
-replot_answer <- "blank"
-while(replot_answer != "yes" & replot_answer != "no"){
-  replot_answer <- dlgInput("Do you want to replot the visualizations with the corrected data?", "yes/no")$res
-}
-
-if(replot_answer == "yes"){
-  ratio_data <- final_corrected_data
-  eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
-  ltr_rsd_2 <- ltr_rsd 
-  normalized_check_p_2 <- normalized_check_p
-  normalized_check_class_p_2 <- normalized_check_class_p
-  
-  final_individual_lipid_data <- ratio_data
-  final_class_lipid_data <- create_lipid_class_data_summed(final_individual_lipid_data)
-  eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
-  pca_scale_used_2 <- scale_used
-  pca_p_2 <- pca_p
-}
-
-
-while(signal_drift_continue != "change"& signal_drift_continue != "continue"){
-  signal_drift_continue <- dlgInput("Are you happy with the drift correction or do you want to change", "continue/change")$res
-}
-}
-}
-
 

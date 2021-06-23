@@ -152,6 +152,8 @@ p <- plot_ly(
 #create html widget and display it in the users internet browser
 sil_check_p <- p
 
+sil_check_p
+
 saveWidget(sil_check_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep=""))# save plotly widget
 browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep="")) #open plotly widget in internet browser
 
