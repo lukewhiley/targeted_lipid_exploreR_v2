@@ -113,7 +113,7 @@ QC check 1:
 
 ```{r, summed_SIL_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
-summed_SIL_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script.r")) %>% 
+summed_SIL_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script_v1.r")) %>% 
   content(as = "text")
 eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
 rm(summed_SIL_checkR_script)
@@ -129,7 +129,7 @@ QC check 2:
   
 ```{r, summed_TIC_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
-summed_TIC_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script.R")) %>% 
+summed_TIC_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script_v1.R")) %>% 
   content(as = "text")
 eval(parse(text = summed_TIC_checkR_script), envir = .GlobalEnv)
 rm(summed_TIC_checkR_script)
@@ -146,7 +146,7 @@ QC check 3:
   
 ```{r, intensity checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
-intensity_threshold_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script.R")) %>% 
+intensity_threshold_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script_v1.R")) %>% 
                                            content(as = "text")
 eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
 rm(intensity_threshold_checkR_script)
@@ -162,13 +162,13 @@ LTR normalization:
   
 ```{r, SIL internal standard normalizeR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
-LTR_SIL_normaliseR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_normaliseR.r")) %>% 
+LTR_SIL_normaliseR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_normaliseR_v1.r")) %>% 
                                    content(as = "text")
 eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
 rm(LTR_SIL_normaliseR_script)
 
 # Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_visualizeR_script <- GET(url =url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_visualizeR.R")) %>%
+LTR_SIL_visualizeR_script <- GET(url =url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R")) %>%
                                    content(as = "text")
 eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
 rm(LTR_SIL_checkR_script)
@@ -185,7 +185,7 @@ Create PCA visualizations:
   
 ```{r, PCA checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 
-PCA_QC_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script.r")) %>% 
+PCA_QC_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script_v1.r")) %>% 
                        content(as = "text")
 eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
 pca_scale_used_1 <- scale_used
@@ -211,7 +211,7 @@ if(signal_drift_choice == "yes"){
 
 while(signal_drift_continue != "continue"){
 
-signal_drift_correct_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-signal_driftR_script.r")) %>% 
+signal_drift_correct_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-signal_driftR_script_v1.r")) %>% 
                                      content(as = "text")
 eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
 
@@ -250,7 +250,7 @@ Produce the final HTML QC report
 ```{r, lipid_exploreR report export,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
 # produce a final report
 fileConn<-file(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"))
-writeLines(GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-report_generatoR_script.R")) %>%
+writeLines(GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-report_generatoR_script_v1.R")) %>%
                  content(as = "text"), fileConn)
 close(fileConn)
 
@@ -265,11 +265,11 @@ file.remove(paste(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"
 browseURL(paste0(project_dir_html, "/",project_name, "_", user_name, "_lipid_exploreR_QC_report.html")) #open plotly widget in internet browser
 
 write_csv(final_corrected_data, 
-          paste(project_dir, "/", project_name, "_", user_name, "_processed_lipid_data.csv", sep="")
+          paste0(project_dir, "/", project_name, "_", user_name, "_processed_lipid_data.csv")
           )
 
 write_csv(final_corrected_class_lipid_data, 
-          paste(project_dir, "/", project_name, "_", user_name, "_processed_lipid_class_data.csv", sep="")
+          paste0(project_dir, "/", project_name, "_", user_name, "_processed_lipid_class_data.csv")
           )
 
 dlg_message("Lipidomics pre-processing and QC complete. Thanks for using skylineR and lipid exploreR. TTFN.", type = 'ok')
