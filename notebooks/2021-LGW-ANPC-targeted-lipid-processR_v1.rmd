@@ -89,10 +89,18 @@ dlg_message("Welcome to lipid exploreR! :-)", type = 'ok')
 parent_github_url <- "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/development_branch"
 
 # load custom functions from github
+
+#lipid individual features into summed class values
 lipidomics_class_sum_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-class_sumR_function_v1.r")) %>% 
                                        content(as = "text")
 eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
 rm(lipidomics_class_sum_function)
+
+#PCA function
+lipidomics_PCA_QC_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-PCA_QC_checkR_function.r")) %>% 
+                                    content(as = "text")
+eval(parse(text = lipidomics_PCA_QC_function), envir = .GlobalEnv)
+rm(lipidomics_PCA_QC_function)
 
 # download and parse data preparation script
 lipid_exploreR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-lipid_exploreR_script_v1.r")) %>% 
@@ -166,7 +174,7 @@ eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
 rm(LTR_SIL_normaliseR_script)
 
 # Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
-LTR_SIL_visualizeR_script <- GET(url =url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R")) %>%
+LTR_SIL_visualizeR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v1.R")) %>%
                                    content(as = "text")
 eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
 rm(LTR_SIL_checkR_script)
