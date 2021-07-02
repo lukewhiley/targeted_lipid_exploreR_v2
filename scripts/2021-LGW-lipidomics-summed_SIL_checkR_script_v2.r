@@ -19,7 +19,10 @@ total_summed_sil <- apply(individual_lipid_data %>% select(sampleID), 1, functio
   rename(SIL_TIC = value, sampleID = "individual_lipid_data$sampleID")
 
 
-total_summed_sil <- new_project_run_order %>% left_join(total_summed_sil, by = "sampleID") %>% arrange(injection_order)
+total_summed_sil <- new_project_run_order %>% 
+  left_join(total_summed_sil, by = "sampleID") %>% 
+  arrange(injection_order)
+
 total_summed_sil$sample_idx <- c(1:nrow(total_summed_sil))
 total_summed_sil$LOG_SIL_TIC <- log(total_summed_sil$SIL_TIC)
 
@@ -39,6 +42,10 @@ while(sil_check_status == "change"){
 # sil_cut_off_upper <- median_sil_tic + (as.numeric(temp_answer)*mad_sil_tic)
 
  
+  if(workflow_choice == "default"){
+    temp_answer <- 50
+  }
+  
  temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
  while(is.na(as.numeric(temp_answer))){
    temp_answer <- dlgInput("You did not enter a numeric value.  What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
@@ -155,10 +162,15 @@ sil_check_p <- p
 sil_check_p
 
 saveWidget(sil_check_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep=""))# save plotly widget
-browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep="")) #open plotly widget in internet browser
+#browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep="")) #open plotly widget in internet browser
 
 #sil_qc_fail - ask the user if they wish to continue or change the threshold
 sil_check_status <- "blank"
+
+if(workflow_choice == "default"){
+  sil_check_status <- "continue"
+}
+
 while(sil_check_status != "continue" & sil_check_status != "change"){
   sil_check_status <- dlgInput(paste(nrow(sil_qc_fail), "samples FAILED the SIL QC check.  continue or change the exclusion threshold?"), "continue/change")$res
 }
@@ -166,6 +178,13 @@ while(sil_check_status != "continue" & sil_check_status != "change"){
 
 #sil_qc_fail - ask the user if they wish to remove all/none/samples/LTR which failed the QC check
 temp_answer <- "blank"
+
+if(workflow_choice == "default"){
+  temp_answer <- "all"
+  dlg_message(paste0(nrow(sil_qc_fail), "samples FAILED the SIL QC check", nrow(sil_qc_fail_ltr),"were LTRs.  These have been removed from the dataset."), 
+              type = 'ok')
+}
+
 while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & temp_answer != "LTR"){
   temp_answer <- dlgInput(paste("of the ", nrow(sil_qc_fail), "FAILED samples.  ",  nrow(sil_qc_fail_ltr),"were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
   if(temp_answer == "all"){individual_lipid_data_sil_filtered <- individual_lipid_data %>% filter(!sampleID %in% sil_qc_fail$sampleID)}
