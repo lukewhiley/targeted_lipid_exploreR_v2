@@ -258,6 +258,10 @@ eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
 #replot with corrected data
 
 replot_answer <- "blank"
+if(workflow_choice == "default"){
+  replot_answer <- "yes"
+}
+
 while(replot_answer != "yes" & replot_answer != "no"){
   replot_answer <- dlgInput("Do you want to replot the visualizations with the corrected data?", "yes/no")$res
 }
@@ -282,6 +286,7 @@ while(signal_drift_continue != "change"& signal_drift_continue != "continue"){
 }
 }
 
+pca_p_2
 ```
 
 Produce the final HTML QC report
