@@ -269,9 +269,23 @@ while(replot_answer != "yes" & replot_answer != "no"){
 if(replot_answer == "yes"){
   ratio_data <- final_corrected_data
   eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
+  
+  
   ltr_rsd_2 <- ltr_rsd 
-  normalized_check_p_2 <- normalized_check_p
-  normalized_check_class_p_2 <- normalized_check_class_p
+  
+  ltr_rsd_kable_2 <- c(">30", "<30", "<20", "<15", "<10") %>% 
+  as_tibble() %>%
+  rename(rsd=value)
+total_lipids <- c(length(which(ltr_rsd_2$RSD > 30)), length(which(ltr_rsd_2$RSD < 30)), length(which(ltr_rsd_2$RSD < 20)), length(which(ltr_rsd_2$RSD < 15)), length(which(ltr_rsd_2$RSD < 10)))
+
+normalized_check_class_p_2 <- normalized_check_class_p
+normalized_check_class_p_2
+
+normalized_check_p_2 <- normalized_check_p
+normalized_check_p_2
+
+ltr_rsd_kable_2 <- ltr_rsd_kable_2 %>% 
+  add_column(total_lipids, .after = 2)
   
   final_individual_lipid_data <- ratio_data
   final_class_lipid_data <- create_lipid_class_data_summed(final_individual_lipid_data)
@@ -280,13 +294,22 @@ if(replot_answer == "yes"){
   pca_p_2 <- pca_p
 }
 
-while(signal_drift_continue != "change"& signal_drift_continue != "continue"){
+signal_drift_continue <- "continue"
+ 
+if(workflow_choice != "default"){
   signal_drift_continue <- dlgInput("Are you happy with the drift correction or do you want to change", "continue/change")$res
 }
 }
 }
 
+
 pca_p_2
+
+kable(ltr_rsd_kable_2,
+      caption = "% RSD in LTR summary (post-drift correction)")
+
+
+
 ```
 
 Produce the final HTML QC report
