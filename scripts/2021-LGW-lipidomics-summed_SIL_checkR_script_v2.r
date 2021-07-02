@@ -5,11 +5,13 @@
 #this script fits into the lipidomics lipid exploreR. 
 # the script will look for samples that have been got preparation errors
 # the script sums the total intensity from SIL internal standard
-# Samples are removed if the summed intensity is either > or < x standard deviations (SD) above or below the mean summed SIL internal standard signal of the dataset. 
-# users define the SD cuttoff (x)
-# Sample SIL intensity > x SD indicates high concentration of SIL, so likely as a result of excess SIL IS added
-# Sample SIL intensity < x SD below mean indicates too little volume added of SIL internal standard added
-# users can select if failed samples are removed
+# Samples are removed if the summed intensity is either > or < x from the median summed SIL internal standard signal of the dataset. 
+# users define the SD cuttoff in custom mode (x)
+# default is 50%
+# Sample SIL intensity > x indicates high concentration of SIL, so likely as a result of excess SIL IS added
+# Sample SIL intensity < x  below mean indicates too little volume added of SIL internal standard added
+# users can select if failed samples are removed in custom mode
+# automatically removed in default mode
 
 dlg_message("Internal standard check. This next step will assess the internal standards accross all of the samples. If internal standards have been incorrectly added the summed signal intensity will be too low/high.", type = 'ok')
 
@@ -17,7 +19,6 @@ total_summed_sil <- apply(individual_lipid_data %>% select(sampleID), 1, functio
   temp_data <- individual_lipid_data %>% filter(sampleID == summedSIL) %>% select(-sampleID) %>% select(contains("SIL")) %>% rowSums(na.rm = TRUE)
 }) %>% c() %>% as_tibble() %>%  add_column(individual_lipid_data$sampleID, .before = 1) %>% 
   rename(SIL_TIC = value, sampleID = "individual_lipid_data$sampleID")
-
 
 total_summed_sil <- new_project_run_order %>% 
   left_join(total_summed_sil, by = "sampleID") %>% 
@@ -31,17 +32,8 @@ sil_check_status <- "change"
 while(sil_check_status == "change"){
 
 # #flag samples with SIL x standard deviations below mean
-# temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x number of median absolute deviations from the median", "e.g. recommended default x = 4")$res
-# while(is.na(as.numeric(temp_answer))){
-#   temp_answer <- dlgInput("You did not enter a numeric value.  What do you wish to set for the fail cut off filter.  x number of median absolute deviations from the median", "e.g. recommended default x = 4")$res
-# }
-# 
-#  median_sil_tic <- median(total_summed_sil$SIL_TIC)
-# mad_sil_tic <- mad(total_summed_sil$SIL_TIC)
-# sil_cut_off_lower <- median_sil_tic - (as.numeric(temp_answer)*mad_sil_tic)
-# sil_cut_off_upper <- median_sil_tic + (as.numeric(temp_answer)*mad_sil_tic)
-
- 
+  temp_answer <- "blank"
+  
   if(workflow_choice == "default"){
     temp_answer <- 50
   }
@@ -51,10 +43,7 @@ while(sil_check_status == "change"){
  }
  
   median_sil_tic <- median(total_summed_sil$SIL_TIC)
-  #inter_quantile_range <- as.numeric(quantile(total_summed_sil$SIL_TIC, 0.75)) - as.numeric(quantile(total_summed_sil$SIL_TIC, 0.25))
-  # sil_cut_off_lower <- median_sil_tic - (as.numeric(temp_answer)*inter_quantile_range)
-  # sil_cut_off_upper <- median_sil_tic + (as.numeric(temp_answer)*inter_quantile_range)
-  
+
   sil_cut_off_lower <- median_sil_tic - (median_sil_tic*as.numeric(temp_answer)/100)
   sil_cut_off_upper <- median_sil_tic + (median_sil_tic*as.numeric(temp_answer)/100)
 
@@ -106,11 +95,6 @@ p_plate_list <- lapply(plateIDx[2:length(plateIDx)], function(FUNC_P_PLATE_LIST)
    list(type='line', x0 = FUNC_P_PLATE_LIST, x1= FUNC_P_PLATE_LIST, y0=y_limit_lower-log(median_sil_tic)*.05, y1=y_limit_upper+log(median_sil_tic)*.05,
             line=list(dash='dot', width=2, color = '#808080'))
 })
-
-#only add plate lines if multiple plates exist
-# if(is.na(plateIDx)){
-#   p_plot_lines <- p_threshold_lines
-# }
 
 if(length(plateIDx) == 1){
 p_plot_lines <- p_threshold_lines
@@ -193,9 +177,4 @@ while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & 
 }
 
 #tidy up environment
-
- # remove_list <- c("mad_sil_tic", "median_sil_tic", "plate_number", "sil_check_status", "sil_cut_off_lower", "sil_cut_off_upper", "remove_list",
- #                 "p", "total_summed_sil")
- # rm(list = remove_list)
-      
 
