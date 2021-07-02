@@ -21,26 +21,17 @@ total_summed_tic$LOG_summed_TIC <- log(total_summed_tic$summed_TIC)
 tic_check_status <- "change"
 while(tic_check_status == "change"){
 
-#flag samples with SIL x number of standard deviations below mean
-# temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x number of median absolute deviations from the median", "e.g. recommended default x = 4")$res
-# while(is.na(as.numeric(temp_answer))){
-#   temp_answer <- dlgInput("You did not enter a numeric value.  What do you wish to set for the fail cut off filter.  x number of median absolute deviations from the median", "e.g. recommended default x = 4")$res
-# }
-# 
-# temp_answer <- as.numeric(temp_answer)
-# median_summed_tic <- median(total_summed_tic$summed_TIC)
-# mad_summed_tic <- mad(total_summed_tic$summed_TIC)
-# tic_cut_off_lower <- median_summed_tic - (as.numeric(temp_answer)*mad_summed_tic)
+  temp_answer <- "blank"
   
+  if(workflow_choice == "default"){
+    temp_answer <- 50
+  }
   
-  temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
   while(is.na(as.numeric(temp_answer))){
-    temp_answer <- dlgInput("You did not enter a numeric value.  What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
+    temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
   }
   
   median_summed_tic <- median(total_summed_tic$summed_TIC)
-  # inter_quantile_range <- as.numeric(quantile(total_summed_tic$summed_TIC, 0.50)) - as.numeric(quantile(total_summed_tic$summed_TIC, 0.25))
-  # tic_cut_off_lower <- median_summed_tic - (as.numeric(temp_answer)*inter_quantile_range)
   
   median_summed_tic <- median(total_summed_tic$summed_TIC)
   tic_cut_off_lower <- median_summed_tic - (median_summed_tic*as.numeric(temp_answer)/100)
@@ -141,10 +132,15 @@ p <- plot_ly(
 tic_check_p <- p
 
 saveWidget(tic_check_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_TIC_check_plot.html", sep=""))# save plotly widget
-browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_TIC_check_plot.html", sep="")) #open plotly widget in internet browser
+#browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_TIC_check_plot.html", sep="")) #open plotly widget in internet browser
 
 #tic_qc_fail - ask the user if they wish to continue or change the threshold
 tic_check_status <- "blank"
+
+if(workflow_choice == "default"){
+ tic_check_status <- "continue"
+}
+
 while(tic_check_status != "continue" & tic_check_status != "change"){
   tic_check_status <- dlgInput(paste(nrow(tic_qc_fail),  "samples FAILED the SIL QC check.  continue or change the exclusion threshold?"), "continue/change")$res
 }
@@ -152,6 +148,13 @@ while(tic_check_status != "continue" & tic_check_status != "change"){
 
 #tic_qc_fail - ask the user if they wish to remove all/none/samples/LTR which failed the QC check
 temp_answer <- "blank"
+
+if(workflow_choice == "default"){
+  temp_answer <- "all"
+  dlg_message(paste0(nrow(tic_qc_fail), "  samples FAILED the TIC QC check  ", nrow(tic_qc_fail_ltr),"  were LTRs.  These have been removed from the dataset."), 
+              type = 'ok')
+}
+
 while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & temp_answer != "LTR"){
   temp_answer <- dlgInput(paste("of the ", nrow(tic_qc_fail), "FAILED samples.  ",  nrow(tic_qc_fail_ltr),"  were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
   if(temp_answer == "all"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
@@ -160,6 +163,3 @@ while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & 
   if(temp_answer == "none"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered}
 }
 
-#tidy up environment
- # remove_list <- c("idx_line", "mad_summed_tic", "median_summed_tic", "plate_number", "tic_check_status", "tic_cut_off_lower","p", "total_summed_tic", "remove_list")
- # rm(list = remove_list)

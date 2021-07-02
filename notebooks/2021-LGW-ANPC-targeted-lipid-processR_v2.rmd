@@ -129,13 +129,16 @@ summed_SIL_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-L
 eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
 rm(summed_SIL_checkR_script)
 
+sil_check_p
+
 ```
 
 QC check 2:
   -> Selects and sums all of the lipid targets that are not SIL internal standards 
   -> creates interactive plot of the result
   -> If sample has had correct volume added to plate wells they should be within x% from the median. 
-  -> Default is 50% cut-off - edit as appropriate
+  -> Default is 50% cut-off 
+  -> if in custom mode please edit as appropriate
   -> used for obvious outliers
   
 ```{r, summed_TIC_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
