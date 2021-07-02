@@ -109,13 +109,13 @@ y_axis_settings <- list(
 normalized_check_p <- p
 
 saveWidget(normalized_check_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_plot.html", sep=""))# save plotly widget
-browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_plot.html", sep="")) #open plotly widget in internet browser
+#browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_plot.html", sep="")) #open plotly widget in internet browser
 
-dlg_message("Check plot for summed all normilized features. Press OK to continue", type = 'ok')
+#dlg_message("Check plot for summed all normilized features. Press OK to continue", type = 'ok')
 
 # second - produce a plot of normalized features, summed by class to see if there are any overall trends in the lipid class data
 
-dlg_message("Now we are going to look at the data summed by lipid class", type = 'ok')
+#dlg_message("Now we are going to look at the data summed by lipid class", type = 'ok')
 
 final_individual_lipid_data <- final_dataset
 
@@ -225,6 +225,6 @@ plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
 normalized_check_class_p <- subplot(plotlist, nrows = 4, titleX = TRUE, margin = c(0.015,0.015, 0.05,0.05))
 
 saveWidget(normalized_check_class_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_class_plot.html", sep=""))# save plotly widget
-browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_class_plot.html", sep="")) #open plot_ly widget in internet browser
+#browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_class_plot.html", sep="")) #open plot_ly widget in internet browser
 
-dlg_message("Check plot for summed lipid class normilized features. Press OK to continue", type = 'ok')
+#dlg_message("Check plot for summed lipid class normilized features. Press OK to continue", type = 'ok')

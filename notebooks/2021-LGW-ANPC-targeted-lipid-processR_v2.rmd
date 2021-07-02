@@ -191,8 +191,21 @@ rm(LTR_SIL_checkR_script)
 
 #keep plots for report generation
 ltr_rsd_1 <- ltr_rsd 
+ltr_rsd_kable <- c(">30", "<30", "<20", "<15", "<10") %>% 
+  as_tibble() %>%
+  rename(rsd=value)
+total_lipids <- c(length(which(ltr_rsd$RSD > 30)), length(which(ltr_rsd$RSD < 30)), length(which(ltr_rsd$RSD < 20)), length(which(ltr_rsd$RSD < 15)), length(which(ltr_rsd$RSD < 10)))
+
+ltr_rsd_kable <- ltr_rsd_kable %>% 
+  add_column(total_lipids, .after = 2)
+kable(ltr_rsd_kable,
+      caption = "% RSD in LTR summary")
+dlg_message(ltr_rsd_kable)
+
 normalized_check_p_1 <- normalized_check_p
+normalized_check_p
 normalized_check_class_p_1 <- normalized_check_class_p
+normalized_check_class_p
 
 ```
 
