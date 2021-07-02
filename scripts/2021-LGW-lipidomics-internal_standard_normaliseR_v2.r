@@ -99,8 +99,6 @@ if(workflow_choice == "default"){
   temp_answer <- "continue"
 }
 
-temp_answer <- dlgInput("Do you wish to continue or use different internal standards?", "continue/change")$res
-
 #add in a check in case the user enters the incorrect entry. It must be "continue" or "change" to continue
 while(temp_answer != "continue" & temp_answer!="change"){
   temp_answer <- dlgInput("Do you wish to continue or use different internal standards?", "continue/change")$res
@@ -114,7 +112,7 @@ if(temp_answer == "change"){
 
 ratio_concentration_choice <- "blank"
 if(workflow_choice == "default"){
-  temp_answer <- "concentration"
+  ratio_concentration_choice <- "concentration"
 }
 while(ratio_concentration_choice != "ratio" & ratio_concentration_choice != "concentration"){
   ratio_concentration_choice <- dlgInput("Do you also want to estimate the concentrations or just continue to use the response ratio?", "ratio/concentration")$res
