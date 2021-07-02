@@ -45,10 +45,9 @@ while(sil_check_status == "change"){
   if(workflow_choice == "default"){
     temp_answer <- 50
   }
-  
- temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
+
  while(is.na(as.numeric(temp_answer))){
-   temp_answer <- dlgInput("You did not enter a numeric value.  What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
+   temp_answer <- dlgInput("What do you wish to set for the fail cut off filter.  x % from the median", "e.g. recommended default x = 50")$res
  }
  
   median_sil_tic <- median(total_summed_sil$SIL_TIC)
