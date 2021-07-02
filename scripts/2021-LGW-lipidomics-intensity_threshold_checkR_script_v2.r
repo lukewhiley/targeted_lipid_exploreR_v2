@@ -37,12 +37,13 @@ while(is.na(intensity_threshold_percentage)) {
   intensity_threshold_percentage <- dlgInput("what % of samples do you want over this threshold?", "e.g. recommended default = 50%")$res %>% as.numeric()
 }
 
+# user choice should filter intensity be set for samples/LTR/both
+intensity_threshold_ltr <- "blank"
+
 if(workflow_choice == "default"){
   intensity_threshold_ltr <- "LTR"
 }
 
-# user choice should filter intensity be set for samples/LTR/both
-intensity_threshold_ltr <- "blank"
 while(intensity_threshold_ltr != "samples" & intensity_threshold_ltr != "LTR" & intensity_threshold_ltr != "both") {
   intensity_threshold_ltr <- dlgInput("Do you want to apply the filtering using samples/LTR/both. Recommended default is LTR - allows for better QC control.", "samples/LTR/both")$res
 }
