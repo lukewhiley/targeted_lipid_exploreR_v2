@@ -27,7 +27,7 @@ project_dir_html <- paste(project_dir, paste("/",Sys.Date(), "_html_files", sep=
 temp_answer <- "blank"
 if(exists("project_name") == TRUE){temp_answer <- dlgInput(paste("the project name is ", project_name, "is this correct?", sep=" "), "yes/no")$res}
 while(temp_answer != "yes"){
-project_name <- dlgInput("what is the name of the project? This must match the string in Filename", "example_project")$res
+project_name <- dlgInput("what is the name of the project?", "example_project")$res
 temp_answer <- dlgInput(paste("the project name is ", project_name, "is this correct?", sep=" "), "yes/no")$res
 }
 
