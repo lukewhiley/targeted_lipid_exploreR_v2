@@ -142,8 +142,6 @@ p <- plot_ly(
 #create html widget and display it in the users internet browser
 sil_check_p <- p
 
-sil_check_p
-
 saveWidget(sil_check_p, file = paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep=""))# save plotly widget
 #browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_check_plot.html", sep="")) #open plotly widget in internet browser
 
@@ -164,7 +162,7 @@ temp_answer <- "blank"
 
 if(workflow_choice == "default"){
   temp_answer <- "all"
-  dlg_message(paste0(nrow(sil_qc_fail), "samples FAILED the SIL QC check", nrow(sil_qc_fail_ltr),"were LTRs.  These have been removed from the dataset."), 
+  dlg_message(paste0(nrow(sil_qc_fail), "  samples FAILED the SIL QC check  ", nrow(sil_qc_fail_ltr),"  were LTRs.  These have been removed from the dataset."), 
               type = 'ok')
 }
 
