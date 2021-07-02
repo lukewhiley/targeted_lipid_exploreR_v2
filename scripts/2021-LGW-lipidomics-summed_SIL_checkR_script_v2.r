@@ -176,5 +176,4 @@ while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & 
   if(temp_answer == "none"){individual_lipid_data_sil_filtered <- individual_lipid_data}
 }
 
-#tidy up environment
 
