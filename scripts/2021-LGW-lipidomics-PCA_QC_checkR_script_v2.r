@@ -23,7 +23,7 @@ saveWidget(pca_p[[2]][[1]], file = paste(project_dir_html, "/", project_name, "_
 # while(pca_check_status != "continue" & pca_check_status != "change"){
 #   pca_check_status <- dlgInput("Check the PCA plots. Are you happy to continue? or do wish to change the scalling type?", "continue/change")$res
 # }
-pca_check_status == "continue"
+pca_check_status <- "continue"
 }
 
 scale_used <- pca_p[[3]][1]
