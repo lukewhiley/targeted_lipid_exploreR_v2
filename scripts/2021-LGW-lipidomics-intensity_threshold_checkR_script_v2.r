@@ -17,14 +17,28 @@ while (intensity_threshold_fail_action == "change") {
   
 # user choice on intensity threshold to be applied
 intensity_threshold <- NA
+
+if(workflow_choice == "default"){
+  intensity_threshold <- 5000
+}
+
 while(is.na(intensity_threshold)) {
-  intensity_threshold <- dlgInput("What signal threshold do you want to set for the intensity cut-off filter", "e.g. recommended default = 2500")$res %>% as.numeric()
+  intensity_threshold <- dlgInput("What signal threshold do you want to set for the intensity cut-off filter", "e.g. recommended default = 5000")$res %>% as.numeric()
 }
 
 # user choice on % of samples that must pass intensity threshold
 intensity_threshold_percentage <- NA
+
+if(workflow_choice == "default"){
+  intensity_threshold_percentage <- 50
+}
+
 while(is.na(intensity_threshold_percentage)) {
   intensity_threshold_percentage <- dlgInput("what % of samples do you want over this threshold?", "e.g. recommended default = 50%")$res %>% as.numeric()
+}
+
+if(workflow_choice == "default"){
+  intensity_threshold_ltr <- "LTR"
 }
 
 # user choice should filter intensity be set for samples/LTR/both
@@ -60,7 +74,13 @@ lipid_intensity_filter_fail <- lapply(lipid_intensity_list, function(FUNC_INTENS
   }
  }) %>% c() %>% unlist()
 
-intensity_threshold_fail_action <- dlgInput(paste(length(lipid_intensity_filter_fail), " lipids failed the intensity check. Do you want to remove/keep or change the threshold settings?"), "remove/keep/change")$res
+#intensity_threshold_fail_action <- dlgInput(paste(length(lipid_intensity_filter_fail), " lipids failed the intensity check. Do you want to remove/keep or change the threshold settings?"), "remove/keep/change")$res
+
+if(workflow_choice == "default"){
+dlg_message(paste(length(lipid_intensity_filter_fail), " lipids failed the intensity check and have been removed."))
+  intensity_threshold_fail_action <- "remove"
+}
+  
 while(intensity_threshold_fail_action != "remove" & intensity_threshold_fail_action != "keep" & intensity_threshold_fail_action != "change") {
   intensity_threshold_fail_action <- dlgInput(paste(length(lipid_intensity_filter_fail), " lipids failed the intensity check. Do you want to remove/keep or change the threshold settings?"), "remove/keep/change")$res
 }
