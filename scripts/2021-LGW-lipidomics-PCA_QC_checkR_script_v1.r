@@ -1,4 +1,4 @@
-# produces a PCA of the normalised sampels
+# produces a PCA of the normalized samples
 
 #label data
 final_individual_lipid_data$sample_class <- "sample"
