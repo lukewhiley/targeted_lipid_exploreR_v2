@@ -78,7 +78,7 @@ invisible(lapply(paste0('package:',names(sessionInfo()$otherPkgs)),detach,charac
 }
 
 # load packages
-package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget')
+package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget', 'knitr')
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages, package_list)
 
@@ -182,6 +182,9 @@ LTR_SIL_normaliseR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-
                                    content(as = "text")
 eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
 rm(LTR_SIL_normaliseR_script)
+
+dlg_message(sil_list_warning_html)
+
 
 # Create target lipid to stable isotope ratio internal standard and evaluate them in the pooled QC. Here we use Long Term Reference pool
 LTR_SIL_visualizeR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_visualizeR_v2.r")) %>%
