@@ -71,6 +71,9 @@ samPeno <- paste(project_dir, "/", Sys.Date(), "_signal_correction_results", "/s
 samFile <- paste(project_dir, "/", Sys.Date(), "_signal_correction_results",  "/sil_trend_cor_data.csv", sep="")
 
 signal_drift_method <- "blank"
+if(workflow_choice == "default"){
+  signal_drift_method <- "RF"
+}
 while(signal_drift_method != "loess"& signal_drift_method != "RF"){
   signal_drift_method <- dlgInput("What method do you wish to use? Loess or random forrest?", "loess/RF")$res
 }
