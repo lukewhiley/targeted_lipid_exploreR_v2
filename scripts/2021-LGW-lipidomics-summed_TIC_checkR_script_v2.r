@@ -157,9 +157,10 @@ if(workflow_choice == "default"){
 
 while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & temp_answer != "LTR"){
   temp_answer <- dlgInput(paste("of the ", nrow(tic_qc_fail), "FAILED samples.  ",  nrow(tic_qc_fail_ltr),"  were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
-  if(temp_answer == "all"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
-  if(temp_answer == "samples"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_samples$sampleID)}
-  if(temp_answer == "LTR"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
-  if(temp_answer == "none"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered}
 }
+
+if(temp_answer == "all"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
+if(temp_answer == "samples"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_samples$sampleID)}
+if(temp_answer == "LTR"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
+if(temp_answer == "none"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered}
 
