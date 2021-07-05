@@ -11,7 +11,7 @@ total_summed_tic <- apply(lipid_exploreR_data[["individual_lipid_data_sil_filter
   #browser()
   temp_data <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% select(!contains("SIL")) %>% rowSums(na.rm = TRUE)
 }) %>% c() %>% as_tibble() %>%  add_column(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]$sampleID, .before = 1) %>% 
-  rename(summed_TIC = value, sampleID = "lipid_exploreR_data[[individual_lipid_data_sil_filtered]]")
+  rename(summed_TIC = value, sampleID = `lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]`)
 
 total_summed_tic <- new_project_run_order %>% left_join(total_summed_tic, by = "sampleID") %>% arrange(injection_order) %>% filter(!is.na(summed_TIC))
 total_summed_tic$sample_idx <- c(1:nrow(total_summed_tic))
