@@ -75,29 +75,34 @@ for(idx_sil in 1:length(sil_list$note)){
 sil_list_warning <- missing_sil_list %>% select(sampleID, plateID, lipidID)
 sil_list_warning$reason_for_flag <- "missing value in sample - check skyline"
 
-#SUM sil
-sil_sum <- lapply(sil_list$note, function(FUNC_SIL){
-  #browser()
-  temp_func_data_sum <- sil_data_for_normalisation %>% 
-    select(all_of(FUNC_SIL)) %>% 
-    as.matrix() %>% 
-    sum() %>% 
-    log()
-}) %>% 
-  c() %>% 
-  unlist() %>% 
-  as_tibble() %>% 
-  rename(SIL_SUM = value) %>% 
-  add_column(sil_list, .before = 1) %>% 
-  arrange(SIL_SUM)
+#creates a summed sil value for all samples per SIL compound
+#looks for SIL compounds that are well below the interquartile range for the SILS
+# again indicates the SIL hasn't been added correctly
 
-sil_sum_q1 <- quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE) %>% as.numeric()
-inter_quantile_range <- as.numeric(quantile(sil_sum$SIL_SUM, 0.75, na.rm = TRUE)) - as.numeric(quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE))
-sil_sum_lower_threshold <- sil_sum_q1 - inter_quantile_range
+# sil_sum <- lapply(sil_list$note, function(FUNC_SIL){
+#   #browser()
+#   temp_func_data_sum <- sil_data_for_normalisation %>% 
+#     select(all_of(FUNC_SIL)) %>% 
+#     as.matrix() %>% 
+#     sum() %>% 
+#     log()
+# }) %>% 
+#   c() %>% 
+#   unlist() %>% 
+#   as_tibble() %>% 
+#   rename(SIL_SUM = value) %>% 
+#   add_column(sil_list, .before = 1) %>% 
+#   arrange(SIL_SUM)
+# 
+# sil_sum_q1 <- quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE) %>% as.numeric()
+# inter_quantile_range <- as.numeric(quantile(sil_sum$SIL_SUM, 0.75, na.rm = TRUE)) - as.numeric(quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE))
+# sil_sum_lower_threshold <- sil_sum_q1 - inter_quantile_range
+# 
+# #create a list of IS that fail the test
+# sil_list_warning_2 <- sil_sum$note[which(sil_sum$SIL_SUM < sil_sum_lower_threshold)]
 
-#create a list of IS that fail the test
-sil_list_warning_2 <- sil_sum$note[which(sil_sum$SIL_SUM < sil_sum_lower_threshold)]
 
+# looks at SIL in LTR only for signal (area) %RSD across the LTRs
 sil_data_check_ltr <- sil_data_for_normalisation %>% 
   filter(grepl("LTR", sampleID))
 
@@ -181,7 +186,7 @@ while(is.na(as.numeric(sil_batch))){
 # 1. a response ratio by dividing the signal area for each target lipid by the peak area from the appropriate SIL IS metabolite. 
 # 2. a final estimated concentration using the pre-defined internal standard as a single point calibration
 
-ratio_data <- lapply(colnames(lipid_data_for_normalisation), function(FUNC_IS_RATIO){
+ratio_data <- lapply(lipid_data_for_normalisation %>% select(contains("(")) %>% names(), function(FUNC_IS_RATIO){
   #browser()
   # step 1 - create a ratio between lipid target and the appropriate internal standard as pre-defined in the reference file
   func_data <- data_for_sil_normalisation %>%
@@ -189,9 +194,13 @@ ratio_data <- lapply(colnames(lipid_data_for_normalisation), function(FUNC_IS_RA
   
   sil_to_use <- sil_target_list$note[which(sil_target_list$precursor_name==FUNC_IS_RATIO)]
   
-  func_data_sil <- sil_data_for_normalisation %>% select(all_of(sil_to_use))
-  normalised_data <- func_data
-  normalised_data[,2] <- normalised_data[,2]/func_data_sil
+  func_data_sil <- sil_data_for_normalisation %>% select(sampleID, all_of(sil_to_use))
+  normalised_data <- func_data %>% left_join(func_data_sil, by = "sampleID")
+  normalised_data$ratio <- (normalised_data %>% select(all_of(FUNC_IS_RATIO)) %>% as.matrix()/normalised_data %>% select(all_of(sil_to_use)) %>% as.matrix()) %>% 
+    as.numeric()
+  
+  normalised_data <- normalised_data %>% select(sampleID, ratio) 
+  names(normalised_data) <- c("sampleID", FUNC_IS_RATIO)
   
   concentration_data <- normalised_data
  
@@ -213,7 +222,7 @@ ratio_data <- lapply(colnames(lipid_data_for_normalisation), function(FUNC_IS_RA
 }) %>% 
   reduce(left_join, by = "sampleID")
 
-ratio_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+ratio_data <- data_for_sil_normalisation %>%
   select(sampleID, plateID) %>% 
   left_join(ratio_data, by = "sampleID")
 
