@@ -9,9 +9,16 @@ dlg_message("Summed TIC check. This next step will assess the summed TIC accross
 
 total_summed_tic <- apply(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% select(sampleID), 1, function(summedTIC){
   #browser()
-  temp_data <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% select(!contains("SIL")) %>% rowSums(na.rm = TRUE)
-}) %>% c() %>% as_tibble() %>%  add_column(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]$sampleID, .before = 1) %>% 
-  rename(summed_TIC = value, sampleID = `lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]`)
+  temp_data <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% 
+    filter(sampleID == summedTIC) %>% 
+    select(-sampleID, -plateID) %>% 
+    select(!contains("SIL")) %>% 
+    rowSums(na.rm = TRUE)
+}) %>% 
+  c() %>% 
+  as_tibble() %>%  
+  add_column(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]$sampleID, .before = 1) %>% 
+  rename(summed_TIC = value, sampleID = `lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]$sampleID`)
 
 total_summed_tic <- new_project_run_order %>% left_join(total_summed_tic, by = "sampleID") %>% arrange(injection_order) %>% filter(!is.na(summed_TIC))
 total_summed_tic$sample_idx <- c(1:nrow(total_summed_tic))
