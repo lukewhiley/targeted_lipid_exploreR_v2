@@ -16,7 +16,7 @@ for(idx in unique(sil_target_list$precursor_name)){
     rename(sampleID = replicate, is_area = area) %>%
     select(sampleID, is_area)
   
-  checkpoint <- which(names(old_data) == idx)
+  checkpoint <- which(names(final_corrected_data) == idx)
   
   if(length(checkpoint) > 0){
   
@@ -35,5 +35,7 @@ for(idx in unique(sil_target_list$precursor_name)){
   
   }
 }
+
+View(corr_out)
 
 

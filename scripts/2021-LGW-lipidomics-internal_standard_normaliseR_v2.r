@@ -77,10 +77,10 @@ sil_list_warning_3 <- sil_rsd %>% filter(SIL_RSD > 30) %>% rename(lipidID = note
 sil_list_warning_3$plateID <- NA 
 sil_list_warning_3$reason_for_flag <- "RSD > 30% across dataset"
 sil_list_warning_3$sampleID <- NA
-sil_list_warning_3 <- sil_list_warning_3 %>% select(lipidID, plateID, lipidID, reason_for_flag)
+sil_list_warning_3 <- sil_list_warning_3 %>% select(sampleID, plateID, lipidID, plateID, lipidID, reason_for_flag)
 
-sil_list_warning <- sapply(sil_list_warning, as.character)
-sil_list_warning_3 <- sapply(sil_list_warning_3, as.character)
+sil_list_warning <- sapply(sil_list_warning, as.character) %>% as_tibble()
+sil_list_warning_3 <- sapply(sil_list_warning_3, as.character) %>% as_tibble()
 
 sil_list_warning <- bind_rows(sil_list_warning,
                               sil_list_warning_3)

@@ -43,15 +43,16 @@ if(length(names(sessionInfo()$otherPkgs)) > 0){
 invisible(lapply(paste0('package:',names(sessionInfo()$otherPkgs)),detach,character.only=TRUE, unload=TRUE))
 }
 
-package_list <- c("plyr", "tidyverse", "janitor", "httr")
+# load packages
+package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget', 'knitr')
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
-rm(loaded_packages)
+rm(loaded_packages, package_list)
 
 # set parent github URL
-parent_github_url <- "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR/main"
+parent_github_url <- "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR_v2/main"
 
 # Source R script from Github
-skylineR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-skylineR_script.r")) %>% content(as = "text")
+skylineR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-skylineR_script_v2.r")) %>% content(as = "text")
 
 eval(parse(text = skylineR_script), envir = .GlobalEnv)
 
@@ -78,7 +79,7 @@ invisible(lapply(paste0('package:',names(sessionInfo()$otherPkgs)),detach,charac
 }
 
 # load packages
-package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget', 'knitr')
+package_list <- c("plyr", "tidyverse", "janitor", "gridExtra", "ggpubr", "readxl", "cowplot", "scales", "stats", "devtools", "metabom8", "shiny", "plotly", "svDialogs", "DataEditR", "htmlwidgets", "httr", "htmlTable", 'statTarget', 'knitr', 'mzR')
 loaded_packages <- lapply(package_list, require, character.only = TRUE)
 rm(loaded_packages, package_list)
 
@@ -166,6 +167,8 @@ intensity_threshold_checkR_script <- GET(url = paste0(parent_github_url, "/scrip
                                            content(as = "text")
 eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
 rm(intensity_threshold_checkR_script)
+
+print(paste0("Intensity check complete for ", project_name,  ": ", length(lipid_intensity_filter_fail), " lipids failed the intensity check and were removed."))
 
 ```
 
@@ -333,11 +336,11 @@ file.remove(paste(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"
 browseURL(paste0(project_dir_html, "/",project_name, "_", user_name, "_lipid_exploreR_QC_report.html")) #open plotly widget in internet browser
 
 write_csv(final_corrected_data, 
-          paste0(project_dir, "/", project_name, "_", user_name, "_processed_lipid_data.csv")
+          paste0(Sys.Date(), project_dir, "/", project_name, "_", user_name, "_lipidexploreRv2_individual_lipid_data.csv")
           )
 
 write_csv(final_corrected_class_lipid_data, 
-          paste0(project_dir, "/", project_name, "_", user_name, "_processed_lipid_class_data.csv")
+          paste0(Sys.Date(), project_dir, "/", project_name, "_", user_name, "_lipidexploreRv2_summed_lipid_class_data.csv")
           )
 
 dlg_message("Lipidomics pre-processing and QC complete. Thanks for using skylineR and lipid exploreR. TTFN.", type = 'ok')
