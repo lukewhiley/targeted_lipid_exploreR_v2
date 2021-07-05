@@ -150,7 +150,7 @@ signal_drift_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_
 }) %>% bind_cols %>% as_tibble()
 
 signal_drift_corrected_data <- signal_drift_corrected_data %>% add_column(select(corrected_data, sampleID, plateID), .before = 1)
-#signal_drift_corrected_class_data <- create_lipid_class_data_summed(signal_drift_corrected_data)
+#
 
 ### correlate data with non-signal drift ratio data to prevent over correction
 ###only keep features where correlate r >0.85
@@ -186,4 +186,6 @@ corr_filter_list <- corr_out %>%
 #select corrected data to those lipids that are correlated with > 0.85 to ratio data alone 
 signal_drift_corrected_data <- signal_drift_corrected_data %>% 
   select(sampleID, plateID, all_of(corr_filter_list$lipid))
+
+signal_drift_corrected_class_data <- create_lipid_class_data_summed(signal_drift_corrected_data)
 
