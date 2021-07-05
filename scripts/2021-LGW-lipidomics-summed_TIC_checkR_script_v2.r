@@ -7,11 +7,11 @@
 # the script sums the total intensity from all endogenous targets (e.g. not internal standards)
 dlg_message("Summed TIC check. This next step will assess the summed TIC accross all of the samples. If samples have been incorrectly prepared the summed TIC intensity will be too low/high. Used to remove obvious outliers only.", type = 'ok')
 
-total_summed_tic <- apply(individual_lipid_data_sil_filtered %>% select(sampleID), 1, function(summedTIC){
+total_summed_tic <- apply(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% select(sampleID), 1, function(summedTIC){
   #browser()
-  temp_data <- individual_lipid_data_sil_filtered %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% select(!contains("SIL")) %>% rowSums(na.rm = TRUE)
-}) %>% c() %>% as_tibble() %>%  add_column(individual_lipid_data_sil_filtered$sampleID, .before = 1) %>% 
-  rename(summed_TIC = value, sampleID = "individual_lipid_data_sil_filtered$sampleID")
+  temp_data <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% select(!contains("SIL")) %>% rowSums(na.rm = TRUE)
+}) %>% c() %>% as_tibble() %>%  add_column(lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]$sampleID, .before = 1) %>% 
+  rename(summed_TIC = value, sampleID = "lipid_exploreR_data[[individual_lipid_data_sil_filtered]]")
 
 total_summed_tic <- new_project_run_order %>% left_join(total_summed_tic, by = "sampleID") %>% arrange(injection_order) %>% filter(!is.na(summed_TIC))
 total_summed_tic$sample_idx <- c(1:nrow(total_summed_tic))
@@ -159,8 +159,8 @@ while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & 
   temp_answer <- dlgInput(paste("of the ", nrow(tic_qc_fail), "FAILED samples.  ",  nrow(tic_qc_fail_ltr),"  were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
 }
 
-if(temp_answer == "all"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
-if(temp_answer == "samples"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_samples$sampleID)}
-if(temp_answer == "LTR"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
-if(temp_answer == "none"){individual_lipid_data_sil_tic_filtered <- individual_lipid_data_sil_filtered}
+if(temp_answer == "all"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
+if(temp_answer == "samples"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail_samples$sampleID)}
+if(temp_answer == "LTR"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
+if(temp_answer == "none"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]}
 

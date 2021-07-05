@@ -15,10 +15,10 @@
 
 dlg_message("Internal standard check. This next step will assess the internal standards accross all of the samples. If internal standards have been incorrectly added the summed signal intensity will be too low/high.", type = 'ok')
 
-total_summed_sil <- apply(individual_lipid_data %>% select(sampleID), 1, function(summedSIL){
-  temp_data <- individual_lipid_data %>% filter(sampleID == summedSIL) %>% select(-sampleID) %>% select(contains("SIL")) %>% rowSums(na.rm = TRUE)
-}) %>% c() %>% as_tibble() %>%  add_column(individual_lipid_data$sampleID, .before = 1) %>% 
-  rename(SIL_TIC = value, sampleID = "individual_lipid_data$sampleID")
+total_summed_sil <- apply(lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% select(sampleID), 1, function(summedSIL){
+  temp_data <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(sampleID == summedSIL) %>% select(-sampleID) %>% select(contains("SIL")) %>% rowSums(na.rm = TRUE)
+}) %>% c() %>% as_tibble() %>%  add_column(lipid_exploreR_data[["individual_lipid_data_unprocessed"]]$sampleID, .before = 1) %>% 
+  rename(SIL_TIC = value, sampleID = "lipid_exploreR_data[[individual_lipid_data_unprocessed]]$sampleID")
 
 total_summed_sil <- new_project_run_order %>% 
   left_join(total_summed_sil, by = "sampleID") %>% 
@@ -170,10 +170,10 @@ while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & 
   temp_answer <- dlgInput(paste("of the ", nrow(sil_qc_fail), "FAILED samples.  ",  nrow(sil_qc_fail_ltr),"were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
 }
 
-if(temp_answer == "all"){individual_lipid_data_sil_filtered <- individual_lipid_data %>% filter(!sampleID %in% sil_qc_fail$sampleID)}
-if(temp_answer == "samples"){individual_lipid_data_sil_filtered <- individual_lipid_data %>% filter(!sampleID %in% sil_qc_fail_samples$sampleID)}
-if(temp_answer == "LTR"){individual_lipid_data_sil_filtered <- individual_lipid_data %>% filter(!sampleID %in% sil_qc_fail_ltr$sampleID)}
-if(temp_answer == "none"){individual_lipid_data_sil_filtered <- individual_lipid_data}
+if(temp_answer == "all"){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!sampleID %in% sil_qc_fail$sampleID)}
+if(temp_answer == "samples"){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!sampleID %in% sil_qc_fail_samples$sampleID)}
+if(temp_answer == "LTR"){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!sampleID %in% sil_qc_fail_ltr$sampleID)}
+if(temp_answer == "none"){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]]}
 
 
 
