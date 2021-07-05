@@ -149,7 +149,54 @@ signal_drift_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_
   corrected_data_norm
 }) %>% bind_cols %>% as_tibble()
 
-
-
 signal_drift_corrected_data <- signal_drift_corrected_data %>% add_column(select(corrected_data, sampleID, plateID), .before = 1)
-signal_drift_corrected_class_data <- create_lipid_class_data_summed(signal_drift_corrected_data)
+#signal_drift_corrected_class_data <- create_lipid_class_data_summed(signal_drift_corrected_data)
+
+### correlate data with non-signal drift ratio data to prevent over correction
+###only keep features where correlate r >0.85
+
+corr_out = NULL
+
+for(idx in unique(sil_target_list$precursor_name)){
+  #extract data from master skyline data
+  loop_data <- lipid_exploreR_data$master_skyline_data %>%
+    filter(lipid_target == idx) %>%
+    rename(sampleID = replicate) %>%
+    select(sampleID, area)
+  
+  # extract corresponding SIL IS data from master skyline data
+  is_used <- sil_target_list$note[which(sil_target_list$precursor_name == idx)]
+  
+  loop_is <- lipid_exploreR_data$master_skyline_data %>%
+    filter(lipid_target == is_used) %>%
+    rename(sampleID = replicate, is_area = area) %>%
+    select(sampleID, is_area)
+  
+  checkpoint <- which(names(lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift) == idx)
+  
+  if(length(checkpoint) > 0){
+    
+    processed_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift %>% 
+      select(sampleID, plateID, all_of(idx))
+    
+    test_data <- processed_data %>%
+      left_join(loop_data, by = "sampleID") %>%
+      left_join(loop_is, by = "sampleID")
+    test_data$normalised <- test_data$area/test_data$is_area
+    
+    corr_result <- cor(test_data[,2], test_data$normalised)
+    
+    corr_out <- rbind(corr_out, 
+                      corr_result)
+    
+  }
+}
+
+corr_filter_list <- corr_out %>% 
+  as_tibble(rownames = "lipid") %>%
+  filter(V1 >0.85)
+  
+#select corrected data to those lipids that are correlated with > 0.85 to ratio data alone 
+signal_drift_corrected_data <- signal_drift_corrected_data %>% 
+  select(sampleID, plateID, all_of(corr_filter_list$lipid))
+
