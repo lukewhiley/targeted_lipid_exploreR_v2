@@ -211,7 +211,7 @@ normalized_check_p
 ltr_rsd_kable <- ltr_rsd_kable %>% 
   add_column(total_lipids, .after = 2)
 kable(ltr_rsd_kable,
-      caption = "% RSD in LTR summary")
+      caption = paste0("% RSD in LTR summary: ", project_name))
 
 
 ```
@@ -336,11 +336,11 @@ file.remove(paste(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"
 browseURL(paste0(project_dir_html, "/",project_name, "_", user_name, "_lipid_exploreR_QC_report.html")) #open plotly widget in internet browser
 
 write_csv(final_corrected_data, 
-          paste0(Sys.Date(), project_dir, "/", project_name, "_", user_name, "_lipidexploreRv2_individual_lipid_data.csv")
+          paste0(project_dir, "/", Sys.Date(), project_name, "_", user_name, "_lipidexploreRv2_individual_lipid_data.csv")
           )
 
 write_csv(final_corrected_class_lipid_data, 
-          paste0(Sys.Date(), project_dir, "/", project_name, "_", user_name, "_lipidexploreRv2_summed_lipid_class_data.csv")
+          paste0(project_dir, "/", Sys.Date(), "_", project_name, "_", user_name, "_lipidexploreRv2_summed_lipid_class_data.csv")
           )
 
 dlg_message("Lipidomics pre-processing and QC complete. Thanks for using skylineR and lipid exploreR. TTFN.", type = 'ok')
