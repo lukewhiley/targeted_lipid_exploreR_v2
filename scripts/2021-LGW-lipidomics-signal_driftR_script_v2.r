@@ -105,8 +105,23 @@ if(signal_drift_method == "loess"){
 
 corrected_data <- read_csv(paste(project_dir, "/", Sys.Date(), "_signal_correction_results", "/statTarget/shiftCor/After_shiftCor/shift_all_cor.csv", sep=""))
 corrected_data <- sil_trend_cor_meta %>% select(sampleID, sample) %>% right_join(corrected_data, by = 'sample') %>% select(-sample, -class) %>% arrange(sampleID)
-colnames(corrected_data) <- colnames(sil_trend)
-corrected_data <-  lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio %>% 
+
+#get column names back to correct format (replace _ with (:) e.g. CE_14_0_ to CE(14:0)
+#first add bracket after lipid class
+for (idx_name in lipid_class_list$value){
+  colnames(corrected_data)[grep(paste0(idx_name, "_"), colnames(corrected_data))] <- gsub(idx_name, paste0(idx_name, "("), colnames(corrected_data)[grep(paste0(idx_name, "_"), colnames(corrected_data))])
+}
+
+colnames(corrected_data) <- paste0(colnames(corrected_data), ")")
+colnames(corrected_data) <- sub("\\(_", "\\(", colnames(corrected_data))
+colnames(corrected_data) <- sub("\\_)", "\\)", colnames(corrected_data))
+colnames(corrected_data) <- sub("_",":",colnames(corrected_data))
+colnames(corrected_data) <- sub("_","/",colnames(corrected_data))
+colnames(corrected_data) <- sub("_",":",colnames(corrected_data))
+colnames(corrected_data) <- sub("/","_",colnames(corrected_data))
+colnames(corrected_data)[which(colnames(corrected_data) == "sampleID)")] <- "sampleID"
+
+corrected_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio %>% 
   select(sampleID, plateID) %>% right_join(corrected_data, by = "sampleID")
 
 
@@ -115,8 +130,20 @@ corrected_lipid_list <- corrected_data %>% select(contains("(")) %>% colnames()
 #because the correction changes the concentrations of the lipids, this next section re-scales the values based on the change (ratio) between pre and post corrected signal mean in the LTR QCs
 signal_drift_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_NORM){
   #browser()
-  corrected_data_mean <- corrected_data %>% filter(grepl("LTR", sampleID)) %>% select(all_of(FUNC_LIPID_NORM)) %>% as.matrix() %>% mean()
-  pre_corrected_data_mean <- non_filtered_dataset %>% as_tibble() %>% filter(grepl("LTR", sampleID)) %>% select(all_of(FUNC_LIPID_NORM)) %>% as.matrix() %>% mean()
+  
+  corrected_data_mean <- corrected_data %>% 
+    filter(grepl("LTR", sampleID)) %>% 
+    select(all_of(FUNC_LIPID_NORM)) %>% 
+    as.matrix() %>% 
+    mean()
+  
+  pre_corrected_data_mean <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio %>% 
+    as_tibble() %>% 
+    filter(grepl("LTR", sampleID)) %>% 
+    select(all_of(FUNC_LIPID_NORM)) %>% 
+    as.matrix() %>% 
+    mean()
+  
   normalization_ratio <- corrected_data_mean/pre_corrected_data_mean
   corrected_data_norm <- corrected_data %>% select(FUNC_LIPID_NORM)/normalization_ratio
   corrected_data_norm
