@@ -221,7 +221,8 @@ ltr_rsd_kable <- ltr_rsd_kable %>%
 kable(ltr_rsd_kable,
       caption = paste0("% RSD in LTR summary: ", project_name))
 
-
+lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio_rsd"]]  <- rsd_filtered_data
+lipid_exploreR_data[["class_lipid_data_sil_tic_intensity_filtered_ratio_rsd"]] <- rsd_filtered_class_data
 ```
 
 Create PCA visualizations:
@@ -267,6 +268,10 @@ signal_drift_correct_script <- GET(url = paste0(parent_github_url, "/scripts/202
                                      content(as = "text")
 eval(parse(text = signal_drift_correct_script), envir = .GlobalEnv)
 
+lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]] <- signal_drift_corrected_data
+lipid_exploreR_data[["class_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]] <- signal_drift_corrected_class_data
+
+
 #replot with corrected data
 
 replot_answer <- "blank"
@@ -278,10 +283,10 @@ while(replot_answer != "yes" & replot_answer != "no"){
   replot_answer <- dlgInput("Do you want to replot the visualizations with the corrected data?", "yes/no")$res
 }
 
+#replot summed class plots
 if(replot_answer == "yes"){
-  ratio_data <- final_corrected_data
+  ratio_data <- lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]]
   eval(parse(text = LTR_SIL_visualizeR_script), envir = .GlobalEnv)
-  
   
   ltr_rsd_2 <- ltr_rsd 
   
@@ -299,8 +304,10 @@ normalized_check_p_2
 ltr_rsd_kable_2 <- ltr_rsd_kable_2 %>% 
   add_column(total_lipids, .after = 2)
   
-  final_individual_lipid_data <- ratio_data
-  final_class_lipid_data <- create_lipid_class_data_summed(final_individual_lipid_data)
+
+#replot PCAs
+  rsd_filtered_data <- lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]]
+  rsd_filtered_class_data <- lipid_exploreR_data[["class_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]]
   eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
   pca_scale_used_2 <- scale_used
   pca_p_2 <- pca_p
@@ -313,6 +320,7 @@ if(workflow_choice != "default"){
 }
 }
 }
+
 
 
 pca_p_2
@@ -345,11 +353,11 @@ file.remove(paste(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"
 
 browseURL(paste0(project_dir_html, "/",project_name, "_", user_name, "_lipid_exploreR_QC_report.html")) #open plotly widget in internet browser
 
-write_csv(final_corrected_data, 
+write_csv(lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]], 
           paste0(project_dir, "/", Sys.Date(), "_", project_name, "_", user_name, "_lipidexploreRv2_individual_lipid_data.csv")
           )
 
-write_csv(final_corrected_class_lipid_data, 
+write_csv(lipid_exploreR_data[["class_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift"]], 
           paste0(project_dir, "/", Sys.Date(), "_", project_name, "_", user_name, "_lipidexploreRv2_summed_lipid_class_data.csv")
           )
 

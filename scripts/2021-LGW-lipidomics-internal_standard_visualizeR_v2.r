@@ -16,8 +16,8 @@ dlg_message(paste("number of feature ratios with with an LTR RSD of <10% =", len
 lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 
 
-final_dataset <- ratio_data %>% select(sampleID, plateID, all_of(lipid_keep_list$lipid))
-final_dataset[is.na(final_dataset)] <- 0
+rsd_filtered_data <- ratio_data %>% select(sampleID, plateID, all_of(lipid_keep_list$lipid))
+rsd_filtered_data[is.na(rsd_filtered_data)] <- 0
 
 non_filtered_dataset <- ratio_data_2 %>% select(-plateID)
 non_filtered_dataset[is.na(non_filtered_dataset)] <- 0
@@ -25,11 +25,11 @@ non_filtered_dataset[is.na(non_filtered_dataset)] <- 0
 # visualisation of normalized data
 # first - produce a plot of all normalized features to see if there are any overall trends in the data
 
-total_summed_ratio <- apply(final_dataset %>% select(sampleID), 1, function(summedTIC){
+total_summed_ratio <- apply(rsd_filtered_data %>% select(sampleID), 1, function(summedTIC){
   #browser()
-  temp_data <- final_dataset %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% rowSums(na.rm = TRUE)
-}) %>% c() %>% as_tibble() %>%  add_column(final_dataset$sampleID, final_dataset$plateID, .before = 1) %>% 
-  rename(summed_TIC = value, sampleID = "final_dataset$sampleID", plateID = "final_dataset$plateID")
+  temp_data <- rsd_filtered_data %>% filter(sampleID == summedTIC) %>% select(-sampleID, -plateID) %>% rowSums(na.rm = TRUE)
+}) %>% c() %>% as_tibble() %>%  add_column(rsd_filtered_data$sampleID, rsd_filtered_data$plateID, .before = 1) %>% 
+  rename(summed_TIC = value, sampleID = "rsd_filtered_data$sampleID", plateID = "rsd_filtered_data$plateID")
 total_summed_ratio$sample_idx <- c(1:nrow(total_summed_ratio))
 
 sd(total_summed_ratio$summed_TIC*100)/mean(total_summed_ratio$summed_TIC)
@@ -117,22 +117,20 @@ saveWidget(normalized_check_p, file = paste(project_dir_html, "/", project_name,
 
 #dlg_message("Now we are going to look at the data summed by lipid class", type = 'ok')
 
-final_individual_lipid_data <- final_dataset
+rsd_filtered_class_data <- create_lipid_class_data_summed(rsd_filtered_data)
 
-final_class_lipid_data <- create_lipid_class_data_summed(final_individual_lipid_data)
-
-lipid_class_list <- final_individual_lipid_data %>% select(contains("(")) %>% colnames() 
+lipid_class_list <- rsd_filtered_data %>% select(contains("(")) %>% colnames() 
 lipid_class_list <- sub("\\(.*", "", lipid_class_list) %>% unique()
 lipid_class_list <- lipid_class_list[!grepl("sampleID", lipid_class_list)] %>% as_tibble()
 
 #add ltr TRUE/FALSE column
 
-final_class_lipid_data$is_ltr <- "sample"
-final_class_lipid_data$is_ltr[grep("LTR", final_class_lipid_data$sampleID)] <- "LTR"
+rsd_filtered_data$is_ltr <- "sample"
+rsd_filtered_data$is_ltr[grep("LTR", rsd_filtered_data$sampleID)] <- "LTR"
 
 plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
   #browser()
-  plot_data <- final_class_lipid_data %>% select("sampleID", "is_ltr", all_of(lipidClass)) %>% rename(ms_response = value) 
+  plot_data <- rsd_filtered_data %>% select("sampleID", "is_ltr", all_of(lipidClass)) %>% rename(ms_response = value) 
   plate_id <- str_extract(plot_data$sampleID, "PLIP.*")
   plate_id <- substr(plate_id, 0,15)
   plot_data$sample_index <- paste(plate_id, sub(".*\\_", "", plot_data$sampleID), sep="_")

@@ -1,17 +1,17 @@
 # produces a PCA of the normalized samples
 
 #label data
-final_individual_lipid_data$sample_class <- "sample"
-final_individual_lipid_data$sample_class[grep("LTR", final_individual_lipid_data$sampleID)] <- "LTR"
+rsd_filtered_data$sample_class <- "sample"
+rsd_filtered_data$sample_class[grep("LTR", rsd_filtered_data$sampleID)] <- "LTR"
 
-final_class_lipid_data$sample_class <- "sample"
-final_class_lipid_data$sample_class[grep("LTR", final_class_lipid_data$sampleID)] <- "LTR"
+rsd_filtered_class_data$sample_class <- "sample"
+rsd_filtered_class_data$sample_class[grep("LTR", rsd_filtered_class_data$sampleID)] <- "LTR"
 
 #run function
 pca_check_status <- "change"
 while(pca_check_status == "change"){
 
-pca_p <- lipids_pca_ltr(final_individual_lipid_data, final_class_lipid_data, multivariate_class = "sample_class", plot_label = "sampleID", scaling = "option")
+pca_p <- lipids_pca_ltr(rsd_filtered_data, rsd_filtered_class_data, multivariate_class = "sample_class", plot_label = "sampleID", scaling = "option")
 
 saveWidget(pca_p[[1]][[1]], file = paste(project_dir_html, "/", project_name, "_", user_name, "_QC_PCA_all_lipids.html", sep=""))# save plotly widget
 #browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_QC_PCA_all_lipids.html", sep="")) #open plotly widget in internet browser

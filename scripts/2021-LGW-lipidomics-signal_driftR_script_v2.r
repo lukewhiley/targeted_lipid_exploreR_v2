@@ -6,7 +6,7 @@ library(statTarget)
 dir.create(paste(project_dir, "/", Sys.Date(), "_signal_correction_results", sep=""))
 setwd(paste(project_dir, "/", Sys.Date(), "_signal_correction_results", sep=""))
 
-sil_trend <- non_filtered_dataset
+sil_trend <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio
 sil_trend[sapply(sil_trend, is.infinite)] <- 1e-5
 
 
@@ -112,7 +112,7 @@ corrected_data <- final_individual_lipid_data %>% as_tibble() %>% select(sampleI
 corrected_lipid_list <- corrected_data %>% select(contains("(")) %>% colnames()
 
 #because the correction changes the concentrations of the lipids, this next section re-scales the values based on the change (ratio) between pre and post corrected signal mean in the LTR QCs
-final_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_NORM){
+signal_drift_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_NORM){
   #browser()
   corrected_data_mean <- corrected_data %>% filter(grepl("LTR", sampleID)) %>% select(all_of(FUNC_LIPID_NORM)) %>% as.matrix() %>% mean()
   pre_corrected_data_mean <- non_filtered_dataset %>% as_tibble() %>% filter(grepl("LTR", sampleID)) %>% select(all_of(FUNC_LIPID_NORM)) %>% as.matrix() %>% mean()
@@ -123,5 +123,5 @@ final_corrected_data <- lapply(corrected_lipid_list, function(FUNC_LIPID_NORM){
 
 
 
-final_corrected_data <- final_corrected_data %>% add_column(select(corrected_data, sampleID, plateID), .before = 1)
-final_corrected_class_lipid_data <- create_lipid_class_data_summed(final_corrected_data)
+signal_drift_corrected_data <- signal_drift_corrected_data %>% add_column(select(corrected_data, sampleID, plateID), .before = 1)
+signal_drift_corrected_class_data <- create_lipid_class_data_summed(signal_drift_corrected_data)

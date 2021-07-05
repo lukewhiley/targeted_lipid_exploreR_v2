@@ -201,6 +201,9 @@ ratio_data <- lapply(colnames(lipid_data), function(FUNC_IS_RATIO){
 }) %>% 
   reduce(left_join, by = "sampleID")
 
-lipid_exploreR_data[["ratio_data"]] <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+ratio_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
   select(sampleID, plateID) %>% 
   left_join(ratio_data, by = "sampleID")
+
+lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered_ratio"]] <- ratio_data
+
