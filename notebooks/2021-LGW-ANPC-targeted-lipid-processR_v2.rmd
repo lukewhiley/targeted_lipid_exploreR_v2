@@ -126,7 +126,7 @@ QC check 1:
   
 
 ```{r, summed_SIL_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
-
+setwd(project_dir)
 summed_SIL_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_SIL_checkR_script_v2.r")) %>% 
   content(as = "text")
 eval(parse(text = summed_SIL_checkR_script), envir = .GlobalEnv)
@@ -148,7 +148,7 @@ QC check 2:
   -> used for obvious outliers
   
 ```{r, summed_TIC_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
-
+setwd(project_dir)
 summed_TIC_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-summed_TIC_checkR_script_v2.r")) %>% 
   content(as = "text")
 eval(parse(text = summed_TIC_checkR_script), envir = .GlobalEnv)
@@ -170,7 +170,7 @@ QC check 3:
   -> Recommended default is lipid must be >5000 counts in 50% of LTR samples
   
 ```{r, intensity checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
-
+setwd(project_dir)
 intensity_threshold_checkR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-intensity_threshold_checkR_script_v2.r")) %>% 
                                            content(as = "text")
 eval(parse(text = intensity_threshold_checkR_script), envir = .GlobalEnv)
@@ -188,7 +188,7 @@ LTR normalization:
   -> Creates interactive visualizations of summed ratios (both total dataset and per lipid class)
   
 ```{r, SIL internal standard normalizeR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
-
+setwd(project_dir)
 LTR_SIL_normaliseR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-internal_standard_normaliseR_v2.r")) %>% 
                                    content(as = "text")
 eval(parse(text = LTR_SIL_normaliseR_script), envir = .GlobalEnv)
@@ -228,7 +228,7 @@ Create PCA visualizations:
   -> Creates interactive PCA visualizations of the data
   
 ```{r, PCA checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
-
+setwd(project_dir)
 PCA_QC_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-PCA_QC_checkR_script_v2.r")) %>% 
                        content(as = "text")
 eval(parse(text = PCA_QC_script), envir = .GlobalEnv)
@@ -246,6 +246,7 @@ Signal drift correction using the statTarget package:
   -> signal drift images are output into a folder in the project directory
   
 ```{r, signal drift checkR script,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+setwd(project_dir)
 
 signal_drift_choice <- "blank"
 if(workflow_choice == "default"){
@@ -327,6 +328,7 @@ Produce the final HTML QC report
   -> script produces a final report that is interactive and can be used to evaluate the quality of the data
   
 ```{r, lipid_exploreR report export,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+setwd(project_dir)
 # produce a final report
 fileConn<-file(paste0(project_dir_html, "/ANPC_lipidomics-report-generatoR.r"))
 writeLines(GET(url = paste0(parent_github_url, "/scripts/2021-LGW-lipidomics-report_generatoR_script_v2.r")) %>%

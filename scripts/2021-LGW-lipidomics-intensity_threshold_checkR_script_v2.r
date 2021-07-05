@@ -1,12 +1,28 @@
 # intensity threshold filter to remove lipids that are not present in the dataset
 
-individual_lipid_data_intensity <- lapply(master_lipid_data$lipid_target %>% unique(), function(FUNC_INTENSITY){
-  #browser()
-  sampleID <- master_lipid_data$replicate %>% unique() %>% as_tibble() # create list of sample IDs
-  temp_data <- master_lipid_data %>% filter(lipid_target == FUNC_INTENSITY) %>% select(replicate, height)
-  colnames(temp_data) <- c("value", FUNC_INTENSITY) 
-  temp_data <- left_join(sampleID, temp_data, by = "value") 
-}) %>% bind_cols() %>% select(all_of(lipid)) %>% add_column(sampleID, .before = 1) %>% filter(sampleID %in% individual_lipid_data_sil_tic_filtered$sampleID)
+# individual_lipid_data_intensity <- lapply(lipid, function(FUNC_INTENSITY){
+#   #browser()
+#   
+#   # create list of sample IDs
+#   sampleID <- lipid_exploreR_data$master_skyline_data$replicate %>% 
+#     unique() %>% 
+#     as_tibble() 
+#   
+#   #function data
+#   temp_data <- lipid_exploreR_data$master_skyline_data %>% 
+#     filter(lipid_target == FUNC_INTENSITY) %>% 
+#     select(replicate, height)
+#   
+#   colnames(temp_data) <- c("value", FUNC_INTENSITY) 
+#   temp_data <- left_join(sampleID, temp_data, by = "value") 
+#   
+# }) %>% bind_cols() %>% 
+#   select(all_of(lipid)) %>% 
+#   add_column(sampleID, .before = 1) %>% 
+#   filter(sampleID %in% lipid_exploreR_data$individual_lipid_data_sil_tic_filtered$sampleID)
+
+individual_lipid_data_intensity <- lipid_exploreR_data$individual_lipid_data_sil_tic_filtered %>%
+  select(-plateID, -run_order)
 
 individual_lipid_data_intensity <- individual_lipid_data_intensity %>% select(!contains("SIL"))
 
@@ -87,7 +103,8 @@ while(intensity_threshold_fail_action != "remove" & intensity_threshold_fail_act
 }
 }
 
-if(intensity_threshold_fail_action == "remove"){individual_lipid_data_sil_tic_intensity_filtered <- individual_lipid_data_sil_tic_filtered %>% select(!all_of(lipid_intensity_filter_fail))}
+if(intensity_threshold_fail_action == "remove"){lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] %>% 
+  select(!all_of(lipid_intensity_filter_fail))}
 
-if(intensity_threshold_fail_action == "keep"){individual_lipid_data_sil_tic_intensity_filtered <- individual_lipid_data_sil_tic_filtered}
+if(intensity_threshold_fail_action == "keep"){lipid_exploreR_data[["individual_lipid_data_sil_tic_intensity_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]]}
 
