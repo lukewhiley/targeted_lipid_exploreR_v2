@@ -127,7 +127,7 @@ sil_list_warning_3$sampleID <- NA
 sil_list_warning_3 <- sil_list_warning_3 %>% select(sampleID, plateID, lipidID, plateID, lipidID, reason_for_flag)
 
 sil_list_warning <- sapply(sil_list_warning, as.character) %>% as_tibble()
-sil_list_warning_3 <- sapply(sil_list_warning_3, as.character) %>% as_tibble()
+#sil_list_warning_3 <- sapply(sil_list_warning_3, as.character) %>% as_tibble()
 
 sil_list_warning <- bind_rows(sil_list_warning,
                               sil_list_warning_3)
