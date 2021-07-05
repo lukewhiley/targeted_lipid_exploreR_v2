@@ -2,6 +2,21 @@
 ###### Internal standard normalization #########
 #################################################
 
+## data preparation from previous script
+
+data_for_sil_normalisation <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered
+
+#replace NAs/missing values with a low value 
+#first convert all 0 values to NA
+data_for_sil_normalisation[data_for_sil_normalisation==0] <- NA
+
+#then impute all NAs with the minimum value in the spreadsheet (estimate of a noise peak)
+
+data_for_sil_normalisation[is.na(data_for_sil_normalisation)] <- data_for_sil_normalisation %>% 
+  select(contains("(")) %>%
+  as.matrix() %>%
+  min(na.rm = TRUE)
+
 # this section normalizes each SRM lipid target with the appropriate internal standard
 # Requires a template guide with internal standard transition for each target lipid SRM transition
 
@@ -17,23 +32,19 @@ dlg_message("Step 1 - please prepare a reference csv file listing each lipid tar
 
 dlg_message("Please select this template file now.", type = 'ok')
 
-#replace NAs/missing values with a zero
-lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered[is.na(lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered)] <- 0
+
+
 
 temp_answer <- "change"
 while(temp_answer == "change"){
 sil_target_list <- read_csv(file = file.choose(.)) %>% clean_names
 
-lipid_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
-  select(contains("(")) %>% 
+lipid_data_for_normalisation <- data_for_sil_normalisation %>% 
+  select(sampleID, plateID, contains("(")) %>% 
   select(!contains("SIL"))
 
-#replace 0 values with a tiny number to avoid calculations of infinity
-lipid_data[lipid_data == 0] <- 1e-5
-
-#sil_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
-  #select(-sampleID, - plateID) %>% 
-  #select(contains("SIL"))
+sil_data_for_normalisation <- data_for_sil_normalisation %>% 
+  select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
 
 # this section checks each of the SIL IS used in the target list template in the LTRs. It evaluates if:
 ##  a: is the internal standard present in the LTR samples? Some batches of IS do not contain every IS availible. This alos prevents user error if the IS batch has not been made correctly.
@@ -41,15 +52,15 @@ lipid_data[lipid_data == 0] <- 1e-5
 
 dlg_message("Checks to see if all internal standards are present in the SIL internal standard mix", type = 'ok')
 
-sil_data_check <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
+
 
 #create a list of SIL internal standards used
 sil_list <- sil_target_list %>% filter(grepl("SIL", note)) %>% select(note) %>% unique() 
 
-# check for missing SIL values
+# check for missing SIL values indicating SIL has not been correctly added
 missing_sil_list <- NULL
 for(idx_sil in 1:length(sil_list$note)){
-  temp_sil_data <- sil_data_check %>% select(sampleID, plateID, sil_list$note[idx_sil])
+  temp_sil_data <- sil_data_for_normalisation %>% select(sampleID, plateID, sil_list$note[idx_sil])
   colnames(temp_sil_data) <- c("sampleID", "plateID", "area")
   temp_sil_data$lipidID <- sil_list$note[idx_sil]
   #if(length(which(temp_sil_data[,3]==0))>0){
@@ -60,12 +71,14 @@ for(idx_sil in 1:length(sil_list$note)){
 #  }
 }
 
+# create a warning list of missing SIL compounds
 sil_list_warning <- missing_sil_list %>% select(sampleID, plateID, lipidID)
 sil_list_warning$reason_for_flag <- "missing value in sample - check skyline"
 
+#SUM sil
 sil_sum <- lapply(sil_list$note, function(FUNC_SIL){
   #browser()
-  temp_func_data_sum <- sil_data_check %>% 
+  temp_func_data_sum <- sil_data_for_normalisation %>% 
     select(all_of(FUNC_SIL)) %>% 
     as.matrix() %>% 
     sum() %>% 
@@ -85,7 +98,7 @@ sil_sum_lower_threshold <- sil_sum_q1 - inter_quantile_range
 #create a list of IS that fail the test
 sil_list_warning_2 <- sil_sum$note[which(sil_sum$SIL_SUM < sil_sum_lower_threshold)]
 
-sil_data_check_ltr <- sil_data_check %>% 
+sil_data_check_ltr <- sil_data_for_normalisation %>% 
   filter(grepl("LTR", sampleID))
 
 sil_rsd <- lapply(sil_list$note, function(FUNC_SIL){
@@ -168,16 +181,15 @@ while(is.na(as.numeric(sil_batch))){
 # 1. a response ratio by dividing the signal area for each target lipid by the peak area from the appropriate SIL IS metabolite. 
 # 2. a final estimated concentration using the pre-defined internal standard as a single point calibration
 
-#ratio_data_2 <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
-  #select(sampleID, plateID)
-ratio_data <- lapply(colnames(lipid_data), function(FUNC_IS_RATIO){
+ratio_data <- lapply(colnames(lipid_data_for_normalisation), function(FUNC_IS_RATIO){
   #browser()
   # step 1 - create a ratio between lipid target and the appropriate internal standard as pre-defined in the reference file
-  func_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+  func_data <- data_for_sil_normalisation %>%
     select(sampleID, all_of(FUNC_IS_RATIO))
-    #lipid_data %>% select(all_of(FUNC_IS_RATIO))
+  
   sil_to_use <- sil_target_list$note[which(sil_target_list$precursor_name==FUNC_IS_RATIO)]
-  func_data_sil <- sil_data_check %>% select(all_of(sil_to_use))
+  
+  func_data_sil <- sil_data_for_normalisation %>% select(all_of(sil_to_use))
   normalised_data <- func_data
   normalised_data[,2] <- normalised_data[,2]/func_data_sil
   
