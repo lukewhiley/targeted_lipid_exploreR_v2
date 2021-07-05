@@ -31,9 +31,9 @@ lipid_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filter
 #replace 0 values with a tiny number to avoid calculations of infinity
 lipid_data[lipid_data == 0] <- 1e-5
 
-sil_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
-  select(-sampleID, - plateID) %>% 
-  select(contains("SIL"))
+#sil_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
+  #select(-sampleID, - plateID) %>% 
+  #select(contains("SIL"))
 
 # this section checks each of the SIL IS used in the target list template in the LTRs. It evaluates if:
 ##  a: is the internal standard present in the LTR samples? Some batches of IS do not contain every IS availible. This alos prevents user error if the IS batch has not been made correctly.
@@ -41,8 +41,9 @@ sil_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered
 
 dlg_message("Checks to see if all internal standards are present in the SIL internal standard mix", type = 'ok')
 
-#sil_data_check <- individual_lipid_data_sil_tic_filtered %>% select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
+sil_data_check <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
 
+#create a list of SIL internal standards used
 sil_list <- sil_target_list %>% filter(grepl("SIL", note)) %>% select(note) %>% unique() 
 
 # check for missing SIL values
@@ -64,8 +65,18 @@ sil_list_warning$reason_for_flag <- "missing value in sample - check skyline"
 
 sil_sum <- lapply(sil_list$note, function(FUNC_SIL){
   #browser()
-  temp_func_data_sum <- sil_data_check %>% select(all_of(FUNC_SIL)) %>% as.matrix() %>% sum() %>% log()
-}) %>% c() %>% unlist() %>% as_tibble() %>% rename(SIL_SUM = value) %>% add_column(sil_list, .before = 1) %>% arrange(SIL_SUM)
+  temp_func_data_sum <- sil_data_check %>% 
+    select(all_of(FUNC_SIL)) %>% 
+    as.matrix() %>% 
+    sum() %>% 
+    log()
+}) %>% 
+  c() %>% 
+  unlist() %>% 
+  as_tibble() %>% 
+  rename(SIL_SUM = value) %>% 
+  add_column(sil_list, .before = 1) %>% 
+  arrange(SIL_SUM)
 
 sil_sum_q1 <- quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE) %>% as.numeric()
 inter_quantile_range <- as.numeric(quantile(sil_sum$SIL_SUM, 0.75, na.rm = TRUE)) - as.numeric(quantile(sil_sum$SIL_SUM, 0.25, na.rm = TRUE))
@@ -74,15 +85,22 @@ sil_sum_lower_threshold <- sil_sum_q1 - inter_quantile_range
 #create a list of IS that fail the test
 sil_list_warning_2 <- sil_sum$note[which(sil_sum$SIL_SUM < sil_sum_lower_threshold)]
 
-sil_data_check <- individual_lipid_data_sil_tic_filtered %>% select(sampleID, plateID, contains("SIL")) %>% filter(grepl("LTR", sampleID))
+sil_data_check_ltr <- sil_data_check %>% 
+  filter(grepl("LTR", sampleID))
+
 sil_rsd <- lapply(sil_list$note, function(FUNC_SIL){
   #browser()
-  temp_func_data <- sil_data_check %>% select(all_of(FUNC_SIL))
+  temp_func_data <- sil_data_check_ltr %>% select(all_of(FUNC_SIL))
   temp_func_data_mean <- temp_func_data %>% as.matrix() %>% mean()
   temp_func_data_sd <- temp_func_data %>% as.matrix() %>% sd()
   temp_func_data_rsd <- (temp_func_data_sd/temp_func_data_mean)*100
   temp_func_data_rsd
-}) %>% c() %>% unlist() %>% as_tibble() %>% rename(SIL_RSD = value) %>% add_column(sil_list, .before = 1)
+}) %>% 
+  c() %>% 
+  unlist() %>% 
+  as_tibble() %>% 
+  rename(SIL_RSD = value) %>% 
+  add_column(sil_list, .before = 1)
 
 sil_list_warning_3 <- sil_rsd %>% filter(SIL_RSD > 30) %>% rename(lipidID = note) %>% select(lipidID)
 sil_list_warning_3$plateID <- NA 
@@ -150,30 +168,39 @@ while(is.na(as.numeric(sil_batch))){
 # 1. a response ratio by dividing the signal area for each target lipid by the peak area from the appropriate SIL IS metabolite. 
 # 2. a final estimated concentration using the pre-defined internal standard as a single point calibration
 
+#ratio_data_2 <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+  #select(sampleID, plateID)
 ratio_data <- lapply(colnames(lipid_data), function(FUNC_IS_RATIO){
   #browser()
   # step 1 - create a ratio between lipid target and the appropriate internal standard as pre-defined in the reference file
-  func_data <- lipid_data %>% select(all_of(FUNC_IS_RATIO))
+  func_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+    select(sampleID, all_of(FUNC_IS_RATIO))
+    #lipid_data %>% select(all_of(FUNC_IS_RATIO))
   sil_to_use <- sil_target_list$note[which(sil_target_list$precursor_name==FUNC_IS_RATIO)]
-  func_data_sil <- sil_data %>% select(all_of(sil_to_use))
-  normalised_data <- func_data/func_data_sil
+  func_data_sil <- sil_data_check %>% select(all_of(sil_to_use))
+  normalised_data <- func_data
+  normalised_data[,2] <- normalised_data[,2]/func_data_sil
+  
   concentration_data <- normalised_data
  
-  
   if(ratio_concentration_choice == "ratio"){
     normalised_data
   }
   
   #step 2 - select concentration factor from csv template and multiply normalised data by concentration factor
   if(ratio_concentration_choice == "concentration"){
-  func_concentration_factor <- sil_concentrations %>% filter(sil_name == sil_to_use) %>% select(concentration_factor) %>% as.numeric()
-  concentration_data <- normalised_data*func_concentration_factor
+  func_concentration_factor <- sil_concentrations %>% 
+    filter(sil_name == sil_to_use) %>% 
+    select(concentration_factor) %>% 
+    as.numeric()
+  
+  concentration_data[,2] <- concentration_data[,2]*func_concentration_factor
   concentration_data
   }
   
-}) %>% bind_cols %>% as_tibble() %>% add_column(filtered_data$sampleID, filtered_data$plateID, .before = 1)
+}) %>% 
+  reduce(left_join, by = "sampleID")
 
-colnames(ratio_data) <- c("sampleID", "plateID",  colnames(lipid_data))
-
-ratio_data_2 <- ratio_data
-
+lipid_exploreR_data[["ratio_data"]] <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>%
+  select(sampleID, plateID) %>% 
+  left_join(ratio_data, by = "sampleID")
