@@ -125,12 +125,12 @@ lipid_class_list <- lipid_class_list[!grepl("sampleID", lipid_class_list)] %>% a
 
 #add ltr TRUE/FALSE column
 
-rsd_filtered_data$is_ltr <- "sample"
-rsd_filtered_data$is_ltr[grep("LTR", rsd_filtered_data$sampleID)] <- "LTR"
+rsd_filtered_class_data$is_ltr <- "sample"
+rsd_filtered_class_data$is_ltr[grep("LTR", rsd_filtered_class_data$sampleID)] <- "LTR"
 
 plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
   #browser()
-  plot_data <- rsd_filtered_data %>% select("sampleID", "is_ltr", all_of(lipidClass)) %>% rename(ms_response = value) 
+  plot_data <- rsd_filtered_class_data %>% select("sampleID", "is_ltr", all_of(lipidClass)) %>% rename(ms_response = value) 
   plate_id <- str_extract(plot_data$sampleID, "PLIP.*")
   plate_id <- substr(plate_id, 0,15)
   plot_data$sample_index <- paste(plate_id, sub(".*\\_", "", plot_data$sampleID), sep="_")
