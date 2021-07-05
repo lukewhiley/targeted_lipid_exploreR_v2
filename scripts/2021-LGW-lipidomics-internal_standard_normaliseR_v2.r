@@ -12,17 +12,28 @@ dlg_message("First we need to create response ratios by dividing the lipid targe
 dlg_message("Step 1 - please prepare a reference csv file listing each lipid target and the assigned internal standard. Column headings required are 'Precursor Name' containing the lipid target  and 'Note' containing the IS name", type = 'ok')
 
 #import transition report 3
-filtered_data <- individual_lipid_data_sil_tic_intensity_filtered %>% filter(!grepl("conditioning", sampleID))
-filtered_data[is.na(filtered_data)] <- 0
+# filtered_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered  %>% 
+#   filter(!grepl("conditioning", sampleID))
 
 dlg_message("Please select this template file now.", type = 'ok')
+
+#replace NAs/missing values with a zero
+lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered[is.na(lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered)] <- 0
 
 temp_answer <- "change"
 while(temp_answer == "change"){
 sil_target_list <- read_csv(file = file.choose(.)) %>% clean_names
-lipid_data <- filtered_data %>% select(contains("(")) %>% select(!contains("SIL"))
+
+lipid_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
+  select(contains("(")) %>% 
+  select(!contains("SIL"))
+
+#replace 0 values with a tiny number to avoid calculations of infinity
 lipid_data[lipid_data == 0] <- 1e-5
-sil_data <- filtered_data %>% select(-sampleID, - plateID) %>% select(contains("SIL"))
+
+sil_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered %>% 
+  select(-sampleID, - plateID) %>% 
+  select(contains("SIL"))
 
 # this section checks each of the SIL IS used in the target list template in the LTRs. It evaluates if:
 ##  a: is the internal standard present in the LTR samples? Some batches of IS do not contain every IS availible. This alos prevents user error if the IS batch has not been made correctly.
@@ -30,7 +41,7 @@ sil_data <- filtered_data %>% select(-sampleID, - plateID) %>% select(contains("
 
 dlg_message("Checks to see if all internal standards are present in the SIL internal standard mix", type = 'ok')
 
-sil_data_check <- individual_lipid_data_sil_tic_filtered %>% select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
+#sil_data_check <- individual_lipid_data_sil_tic_filtered %>% select(sampleID, plateID, contains("SIL")) #%>% filter(grepl("LTR", sampleID))
 
 sil_list <- sil_target_list %>% filter(grepl("SIL", note)) %>% select(note) %>% unique() 
 
