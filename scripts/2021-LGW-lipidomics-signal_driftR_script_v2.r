@@ -157,44 +157,31 @@ signal_drift_corrected_data <- signal_drift_corrected_data %>% add_column(select
 
 corr_out = NULL
 
-for(idx in unique(sil_target_list$precursor_name)){
-  #extract data from master skyline data
-  loop_data <- lipid_exploreR_data$master_skyline_data %>%
-    filter(lipid_target == idx) %>%
-    rename(sampleID = replicate) %>%
-    select(sampleID, area)
+for(idx in signal_drift_corrected_data %>% select(contains("(")) %>% names()){
   
-  # extract corresponding SIL IS data from master skyline data
-  is_used <- sil_target_list$note[which(sil_target_list$precursor_name == idx)]
+  #extract data from ratio data (before signal correction)
+  loop_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio %>%
+    select(sampleID, idx)
   
-  loop_is <- lipid_exploreR_data$master_skyline_data %>%
-    filter(lipid_target == is_used) %>%
-    rename(sampleID = replicate, is_area = area) %>%
-    select(sampleID, is_area)
-  
-  checkpoint <- which(names(lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift) == idx)
-  
-  if(length(checkpoint) > 0){
-    
-    processed_data <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio_signal_drift %>% 
+    processed_data <- signal_drift_corrected_data %>% 
       select(sampleID, plateID, all_of(idx))
     
     test_data <- processed_data %>%
-      left_join(loop_data, by = "sampleID") %>%
-      left_join(loop_is, by = "sampleID")
-    test_data$normalised <- test_data$area/test_data$is_area
-    
-    corr_result <- cor(test_data[,2], test_data$normalised)
+      left_join(loop_data, by = "sampleID")
+     
+    corr_result <- cor(test_data[,3], test_data[,4]) %>% as_tibble(rownames = "lipid")
+    colnames(corr_result)[2] <- "r_value"
     
     corr_out <- rbind(corr_out, 
                       corr_result)
     
   }
-}
 
-corr_filter_list <- corr_out %>% 
-  as_tibble(rownames = "lipid") %>%
-  filter(V1 >0.85)
+corr_out$lipid <- gsub(".x", "", corr_out$lipid)
+
+
+corr_filter_list <- corr_out %>%
+  filter(r_value > 0.85)
   
 #select corrected data to those lipids that are correlated with > 0.85 to ratio data alone 
 signal_drift_corrected_data <- signal_drift_corrected_data %>% 
