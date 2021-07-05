@@ -17,7 +17,7 @@ lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 
 
 rsd_filtered_data <- ratio_data %>% select(sampleID, plateID, all_of(lipid_keep_list$lipid))
-rsd_filtered_data[is.na(rsd_filtered_data)] <- 0
+#rsd_filtered_data[is.na(rsd_filtered_data)] <- 0
 
 #non_filtered_dataset <- ratio_data_2 %>% select(-plateID)
 #non_filtered_dataset[is.na(non_filtered_dataset)] <- 0
@@ -32,7 +32,7 @@ total_summed_ratio <- apply(rsd_filtered_data %>% select(sampleID), 1, function(
   rename(summed_TIC = value, sampleID = "rsd_filtered_data$sampleID", plateID = "rsd_filtered_data$plateID")
 total_summed_ratio$sample_idx <- c(1:nrow(total_summed_ratio))
 
-sd(total_summed_ratio$summed_TIC*100)/mean(total_summed_ratio$summed_TIC)
+#sd(total_summed_ratio$summed_TIC*100)/mean(total_summed_ratio$summed_TIC)
 
 total_summed_ratio$sample <- "sample"
 total_summed_ratio$sample[grep("LTR", total_summed_ratio$sampleID)] <- "LTR"
@@ -226,3 +226,4 @@ saveWidget(normalized_check_class_p, file = paste(project_dir_html, "/", project
 #browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_normalized_check_class_plot.html", sep="")) #open plot_ly widget in internet browser
 
 #dlg_message("Check plot for summed lipid class normilized features. Press OK to continue", type = 'ok')
+
