@@ -19,8 +19,8 @@ lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 rsd_filtered_data <- ratio_data %>% select(sampleID, plateID, all_of(lipid_keep_list$lipid))
 rsd_filtered_data[is.na(rsd_filtered_data)] <- 0
 
-non_filtered_dataset <- ratio_data_2 %>% select(-plateID)
-non_filtered_dataset[is.na(non_filtered_dataset)] <- 0
+#non_filtered_dataset <- ratio_data_2 %>% select(-plateID)
+#non_filtered_dataset[is.na(non_filtered_dataset)] <- 0
 
 # visualisation of normalized data
 # first - produce a plot of all normalized features to see if there are any overall trends in the data
