@@ -43,6 +43,10 @@ sampleID <- lipid_exploreR_data[["master_skyline_data"]]$replicate %>% unique() 
 lipid <- lipid_exploreR_data[["master_skyline_data"]]$lipid_target %>% unique() # create list of lipid targets
 lipid_class_list <- lipid_exploreR_data[["master_skyline_data"]] %>% select(lipid_class) %>% unique()
 
+# convert are column to numeric
+
+lipid_exploreR_data[["master_skyline_data"]]$area <- lipid_exploreR_data[["master_skyline_data"]]$area %>% sapply(as.numeric)
+
 #transpose data from skyline export to format with sampleID and 1x column pwer lipid target
 lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- apply(as_tibble(lipid), 1, function(FUNC_lipid){
   #browser()

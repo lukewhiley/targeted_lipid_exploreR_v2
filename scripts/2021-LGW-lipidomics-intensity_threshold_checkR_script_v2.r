@@ -30,6 +30,7 @@ lipid_intensity_list <- individual_lipid_data_intensity %>% select(contains("(")
 
 intensity_threshold_fail_action <- "change"
 while (intensity_threshold_fail_action == "change") {
+  intensity_threshold_fail_action <- "blank"
   
 # user choice on intensity threshold to be applied
 intensity_threshold <- NA

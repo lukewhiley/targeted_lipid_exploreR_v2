@@ -141,7 +141,7 @@ browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_SIL_inter
 dlg_message(paste("SIL WARNING: CHECK BROWSER FOR TABLE OF FAILED SIL SRTANDARDS AND CHECK SKYLINE IF NECESSARY"), 
             type = 'ok')
 
-temp_answer <- "change"
+temp_answer <- "blank"
 if(workflow_choice == "default"){
   temp_answer <- "continue"
 }

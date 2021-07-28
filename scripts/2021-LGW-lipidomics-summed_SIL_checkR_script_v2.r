@@ -16,6 +16,7 @@
 dlg_message("Internal standard check. This next step will assess the internal standards accross all of the samples. If internal standards have been incorrectly added the summed signal intensity will be too low/high.", type = 'ok')
 
 total_summed_sil <- apply(lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% select(sampleID), 1, function(summedSIL){
+  browser()
   temp_data <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% 
     filter(sampleID == summedSIL) %>% 
     select(-sampleID) %>% 
