@@ -1,0 +1,45 @@
+---
+title: "lipid sumR function script"
+output: html_notebook
+---
+
+This R script is designed to run with ANPC lipid data and create values for summed lipid classes.
+
+Requirements for use
+  -> lipid csv file produced by the ANPC
+  -> the following packages installed and laoded
+    -> "tidyverse" 
+    -> "httr"
+    -> "svDialogs"
+
+
+```{r, eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
+
+#load packages
+package_list <- c("tidyverse", "httr", "svDialogs")
+loaded_packages <- lapply(package_list, require, character.only = TRUE)
+rm(loaded_packages, package_list)
+
+# set parent github URL
+parent_github_url <- "https://raw.githubusercontent.com/lukewhiley/targeted_lipid_exploreR_v2/main"
+
+# load custom functions from github
+#lipid individual features into summed class values
+lipidomics_class_sum_function <- GET(url = paste0(parent_github_url, "/functions/2021-LGW-lipidomics-class_sumR_function_v2.r")) %>% 
+                                       content(as = "text")
+eval(parse(text = lipidomics_class_sum_function), envir = .GlobalEnv)
+rm(lipidomics_class_sum_function)
+
+#read in data
+svDialogs::dlg_message("select you csv containing individual lipid data")
+individual_lipid_data <- read_csv(file.choose())
+
+#run sumR function
+summed_lipid_data <- create_lipid_class_data_summed(individual_lipid_data)
+
+#export data
+svDialogs::dlg_message("Next save the exported file as a csv")
+write_csv(summed_lipid_data, file.choose(new=TRUE))
+
+```
+
