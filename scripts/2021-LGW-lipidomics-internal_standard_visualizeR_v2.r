@@ -20,11 +20,12 @@ while(temp_answer != "yes" & temp_answer != "no"){
 
 
 if(temp_answer == "yes"){
-  dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""))
+  dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""), type = 'ok')
   lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 }
 
 if(temp_answer == "no"){
+  dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30%", sep=""), type = 'ok')
   lipid_keep_list <- ltr_rsd
 }
 
