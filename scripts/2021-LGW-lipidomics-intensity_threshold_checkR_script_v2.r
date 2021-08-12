@@ -58,11 +58,11 @@ while(is.na(intensity_threshold_percentage)) {
 intensity_threshold_ltr <- "blank"
 
 if(workflow_choice == "default"){
-  intensity_threshold_ltr <- "LTR"
+  intensity_threshold_ltr <- paste0(qc_type)
 }
 
-while(intensity_threshold_ltr != "samples" & intensity_threshold_ltr != "LTR" & intensity_threshold_ltr != "both") {
-  intensity_threshold_ltr <- dlgInput("Do you want to apply the filtering using samples/LTR/both. Recommended default is LTR - allows for better QC control.", "samples/LTR/both")$res
+while(intensity_threshold_ltr != "samples" & intensity_threshold_ltr != paste0(qc_type) & intensity_threshold_ltr != "both") {
+  intensity_threshold_ltr <- dlgInput(paste0("Do you want to apply the filtering using samples/", paste0(qc_type), "/both. Recommended default is ", paste0(qc_type), " - allows for better QC control."), paste0("samples/", qc_type, "/both"))$res
 }
 
 
@@ -70,11 +70,11 @@ while(intensity_threshold_ltr != "samples" & intensity_threshold_ltr != "LTR" & 
 lipid_intensity_filter_fail <- lapply(lipid_intensity_list, function(FUNC_INTENSITY){
 #browser()
   #first filter data according to user input - check intensity in LTRs, samples, or both
-  if(intensity_threshold_ltr == "LTR"){
-    individual_lipid_data_intensity_temp <- individual_lipid_data_intensity %>% filter(grepl("LTR", sampleID))
+  if(intensity_threshold_ltr == paste0(qc_type)){
+    individual_lipid_data_intensity_temp <- individual_lipid_data_intensity %>% filter(grepl(paste0(qc_type), sampleID))
   }
   if(intensity_threshold_ltr == "samples"){
-    individual_lipid_data_intensity_temp <- individual_lipid_data_intensity %>% filter(!grepl("LTR", sampleID))
+    individual_lipid_data_intensity_temp <- individual_lipid_data_intensity %>% filter(!grepl(paste0(qc_type), sampleID))
   }
   if(intensity_threshold_ltr == "both"){
     individual_lipid_data_intensity_temp <- individual_lipid_data_intensity 
