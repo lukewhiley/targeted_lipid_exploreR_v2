@@ -187,5 +187,9 @@ if(temp_answer == "samples"){lipid_exploreR_data[["individual_lipid_data_sil_fil
 if(temp_answer == paste0(qc_type)){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!sampleID %in% sil_qc_fail_ltr$sampleID)}
 if(temp_answer == "none"){lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]]}
 
-
+#filter out blanks and conditioning runs to take dataset forwards
+lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% 
+  filter(!grepl("blank", sampleID)) %>%
+  filter(!grepl("COND", sampleID)) %>%
+  filter(!grepl("conditioning", sampleID))
 
