@@ -165,7 +165,7 @@ kable(tic_qc_fail,
 QC check 3:
   -> Intensity check for individual lipids
   -> Checks all lipid targets for any samples that fall below signal intensity threshold
-  -> Default is 2500 counts, but can be adjusted as required
+  -> Default is 5000 counts, but can be adjusted as required
   -> Script provides options to check in x% of samples/LTRs/PQCs
   -> Recommended default is lipid must be >5000 counts in 50% of LTR/PQC samples
   

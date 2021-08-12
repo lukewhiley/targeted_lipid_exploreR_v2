@@ -1,6 +1,6 @@
 #ANPC Lipidomics PCA quality control visualisation
 
-lipids_pca_ltr <- function(individual_multivariate_data, family_multivariate_data, multivariate_class, plot_label, scaling){
+lipids_pca_ltr <- function(individual_multivariate_data, family_multivariate_data, multivariate_class, plot_label, scaling, qc_label){
   scale_answer <- scaling
   if(scaling == "option"){ 
   scale_answer <- "blank"
@@ -53,8 +53,8 @@ lipids_pca_ltr <- function(individual_multivariate_data, family_multivariate_dat
     plot_Val$sampleID <- sampleID$sampleID
     plot_Val$sample_group <- c(pca_class)
     plot_Val$pca_plot_label <- c(pca_plot_label)
-    plot_Val_samples <- plot_Val %>% filter(!grepl("LTR", pca_plot_label))
-    plot_Val_ltr <- plot_Val %>% filter(grepl("LTR", pca_plot_label))
+    plot_Val_samples <- plot_Val %>% filter(!grepl(paste0(qc_label), pca_plot_label))
+    plot_Val_ltr <- plot_Val %>% filter(grepl(paste0(qc_label), pca_plot_label))
     
     plotly_loadings_data <- pca_model@p %>% as_tibble(rownames = "lipid") %>% rename(PC1 = V1, PC2 = V2)
     

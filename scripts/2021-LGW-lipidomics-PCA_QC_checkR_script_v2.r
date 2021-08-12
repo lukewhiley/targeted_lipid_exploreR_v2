@@ -11,7 +11,7 @@ rsd_filtered_class_data$sample_class[grep(paste0(qc_type), rsd_filtered_class_da
 pca_check_status <- "change"
 while(pca_check_status == "change"){
 
-pca_p <- lipids_pca_ltr(rsd_filtered_data, rsd_filtered_class_data, multivariate_class = "sample_class", plot_label = "sampleID", scaling = "option")
+pca_p <- lipids_pca_ltr(rsd_filtered_data, rsd_filtered_class_data, multivariate_class = "sample_class", plot_label = "sampleID", scaling = "option", qc_label = qc_type)
 
 saveWidget(pca_p[[1]][[1]], file = paste(project_dir_html, "/", project_name, "_", user_name, "_QC_PCA_all_lipids.html", sep=""))# save plotly widget
 #browseURL(paste(project_dir_html, "/", project_name, "_", user_name, "_QC_PCA_all_lipids.html", sep="")) #open plotly widget in internet browser
