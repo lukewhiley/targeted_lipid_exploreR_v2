@@ -7,13 +7,34 @@ ltr_rsd <- apply(as_tibble(colnames(ratio_data %>% select(contains("(")))), 1, f
 }) %>% as_tibble() %>% add_column(colnames(ratio_data %>% select(contains("("))), .before = 1)
 
 colnames(ltr_rsd) <- c("lipid", "RSD")
-dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""))
+
+temp_answer <- "blank"
+
+if(workflow_choice == "default"){
+  temp_answer <- "yes"
+  }
+
+while(temp_answer != "yes" & temp_answer != "no"){
+  temp_answer <- dlgInput(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30%. Do you wnt to remove them?", sep=""), "yes/no")$res
+  }
+
+
+if(temp_answer == "yes"){
+  dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""))
+  lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
+}
+
+if(temp_answer == "no"){
+  lipid_keep_list <- ltr_rsd
+}
+
+#dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""))
 dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <30% =", length(which(ltr_rsd$RSD < 30))), type = 'ok')
 dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <20% =", length(which(ltr_rsd$RSD < 20))), type = 'ok')
 dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <15% =", length(which(ltr_rsd$RSD < 15))), type = 'ok')
 dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <10% =", length(which(ltr_rsd$RSD < 10))), type = 'ok')
 
-lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
+#lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 
 
 rsd_filtered_data <- ratio_data %>% select(sampleID, plateID, all_of(lipid_keep_list$lipid))
