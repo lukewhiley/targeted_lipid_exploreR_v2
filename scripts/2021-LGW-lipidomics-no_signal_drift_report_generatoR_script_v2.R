@@ -26,7 +26,7 @@ sil_check_p
 #'
 #'
 ##+ echo=FALSE, message=FALSE, fig.width=10, fig.height=4
-print(paste(nrow(sil_qc_fail_samples), " study samples and ", nrow(sil_qc_fail_ltr), " LTR samples were removed from the dataset during this check", sep = ""))
+print(paste(nrow(sil_qc_fail_samples), " study samples and ", nrow(sil_qc_fail_ltr)," ", qc_type, " samples were outliers in the dataset during this check", sep = ""))
 #'
 #' The following samples were removed from the dataset at this check point
 #' 
@@ -52,7 +52,7 @@ tic_check_p
 #'
 #'
 #+ echo=FALSE, message=FALSE, fig.width=10, fig.height=4
-print(paste(nrow(tic_qc_fail_samples), " study samples and ", nrow(tic_qc_fail_ltr), " LTR samples were removed from the dataset during this check", sep = ""))
+print(paste(nrow(tic_qc_fail_samples), " study samples and ", nrow(tic_qc_fail_ltr)," ", qc_type, " samples were outliers in the dataset during this check", sep = ""))
 #'
 #' The following samples were removed from the dataset at this check point
 #'  
