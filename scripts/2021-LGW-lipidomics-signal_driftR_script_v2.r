@@ -6,6 +6,7 @@ library(statTarget)
 dir.create(paste(project_dir, "/", Sys.Date(), "_signal_correction_results", sep=""))
 setwd(paste(project_dir, "/", Sys.Date(), "_signal_correction_results", sep=""))
 
+#fill infinite values created at the ratio step with a small value
 sil_trend <- lipid_exploreR_data$individual_lipid_data_sil_tic_intensity_filtered_ratio
 sil_trend[sapply(sil_trend, is.infinite)] <- 1e-5
 
