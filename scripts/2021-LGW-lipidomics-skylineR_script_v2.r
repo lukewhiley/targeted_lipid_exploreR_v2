@@ -9,7 +9,7 @@ dlg_message("Please select your project folder", type = 'ok'); project_dir <- rs
 #pop-up user input here for project name and user initials
 if(exists("project_name") != TRUE){project_name <- dlgInput("what is the name of the project?", "example_project")$res}
 if(exists("user_name") != TRUE){user_name <- dlgInput("Insert your initials", "example_initials")$res}
-quality_control_type <- dlgInput("What type of quality control did you use?", "LTR/PQC/none")$res
+qc_type <- dlgInput("What type of quality control did you use?", "LTR/PQC/none")$res
 
 # read in lipid MS target transition information file
 dlg_message("please select your lipid MS target transition information file", type = 'ok'); transition_metadata <- read_csv(file.choose(.))
@@ -22,9 +22,9 @@ dlg_message("Select the folder containing the mzML files", type = 'ok'); mzML_di
 #dlg_message("Select the mzML file created from the FIRST LTR from the run to read into R", type = 'ok'); test_spectra_1 <- MSnbase::readSRMData(file.choose(.))
 #dlg_message("Select the mzML file created from the LAST LTR from the run to read into R", type = 'ok'); test_spectra_2 <- MSnbase::readSRMData(file.choose(.))
 
-mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl(paste0(quality_control_type), value)) %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
+mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl(paste0(qc_type), value)) %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
 
-# if there are no LTR mzMLs present then the mzML filelist will return a zero value length so recreate the list for samples instead of LTRs
+# if there are no LTR/PQC mzMLs present then the mzML filelist will return a zero value length so recreate the list for samples instead of LTRs
 if(length(mzML_filelist$value) == 0){
   mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
 }
@@ -59,16 +59,16 @@ for(mzML_idx in 1:nrow(mzML_filelist_crop)){
     rt_find <- rbind(rt_find, c(precursor_name, round(apex_rt,2)))
   }
   
-  if(mzML_idx == 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0("LTR_", mzML_idx)))}
-  if(mzML_idx > 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0("LTR_", mzML_idx))) %>% left_join(rt_find_master, by = "lipid")}
+  if(mzML_idx == 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0(qc_type,"_", mzML_idx)))}
+  if(mzML_idx > 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0(qc_type, "_", mzML_idx))) %>% left_join(rt_find_master, by = "lipid")}
   
   #rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0("LTR_", mzML_idx))) 
 }
     
-rt_find_master[,grepl("LTR", colnames(rt_find_master))] <- sapply(rt_find_master[,grepl("LTR", colnames(rt_find_master))], as.numeric)
+rt_find_master[,grepl(paste0(qc_type), colnames(rt_find_master))] <- sapply(rt_find_master[,grepl(paste0(qc_type), colnames(rt_find_master))], as.numeric)
 rt_find_master$median_rt <- NA
 for(lipid_idx in 1:nrow(rt_find_master)){
-  rt_find_master$median_rt[lipid_idx] <- rt_find_master[lipid_idx, grepl("LTR", colnames(rt_find_master))] %>% as.matrix() %>% median(na.rm = TRUE)
+  rt_find_master$median_rt[lipid_idx] <- rt_find_master[lipid_idx, grepl(paste0(qc_type), colnames(rt_find_master))] %>% as.matrix() %>% median(na.rm = TRUE)
   transition_metadata$explicit_retention_time[which(transition_metadata$precursor_name == rt_find_master$lipid[lipid_idx])] <- rt_find_master$median_rt[lipid_idx]
 }
 
@@ -146,7 +146,7 @@ results_2 <- read_csv(file = file.choose(.))  %>%
 
 filenames <- results_2$replicate %>% unique()
 
-results_2_ltr <- results_2 %>% filter(grepl("LTR", replicate))
+results_2_ltr <- results_2 %>% filter(grepl(paste0(qc_type), replicate))
 results_2_ltr$area <- sapply(results_2_ltr$area, as.numeric) #ensure area column is numeric
 
 rt_boundary_output <- lapply(metabolite_target_list$precursor_name, function(FUNC_LIPID){
