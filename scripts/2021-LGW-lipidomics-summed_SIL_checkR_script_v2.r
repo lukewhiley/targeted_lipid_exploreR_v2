@@ -30,7 +30,10 @@ total_summed_sil <- apply(lipid_exploreR_data[["individual_lipid_data_unprocesse
 
 total_summed_sil <- new_project_run_order %>% 
   left_join(total_summed_sil, by = "sampleID") %>% 
-  arrange(injection_order)
+  arrange(injection_order) %>%
+  filter(!grepl("blank"), sampleID) %>%
+  filter(!grepl("COND"), sampleID) %>%
+  filter(!grepl("conditioning"), sampleID)
 
 total_summed_sil$sample_idx <- c(1:nrow(total_summed_sil))
 total_summed_sil$LOG_SIL_TIC <- log(total_summed_sil$SIL_TIC)
@@ -58,8 +61,8 @@ while(sil_check_status == "change"){
 #create lists of which samples have failed the SIL internal standard check
 sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower | total_summed_sil$SIL_TIC > sil_cut_off_upper)] %>% as_tibble %>% rename(sampleID = value)
 sil_qc_fail$fail_point <- "sil"
-sil_qc_fail_ltr <- sil_qc_fail %>% filter(grepl("LTR", sampleID))
-sil_qc_fail_samples <- sil_qc_fail %>% filter(!grepl("LTR", sampleID))
+sil_qc_fail_ltr <- sil_qc_fail %>% filter(grepl(paste0(qc_type), sampleID))
+sil_qc_fail_samples <- sil_qc_fail %>% filter(!grepl(paste0(qc_type), sampleID))
 
 # visualise for reports
 total_summed_sil$removed <- "pass_qc"
