@@ -326,13 +326,13 @@ if(workflow_choice != "default"){
 }
 
 
-
-pca_p_2
+if(signal_drift_choice == "yes"){
+  pca_p_2
 
 kable(ltr_rsd_kable_2,
       caption = "% RSD in LTR summary (post-drift correction)")
 
-
+}
 
 ```
 
