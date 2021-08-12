@@ -35,7 +35,7 @@ mzML_filelist_crop <- mzML_filelist[mzML_filelist_idx,]
 }
 
 #if <12 samples in the mzML filelist then use all of the available samples for retention time optimisation
-if(length(mzML_filelist) < 12) {
+if(length(mzML_filelist$value) < 12) {
 mzML_filelist_crop <- mzML_filelist
 }
 
