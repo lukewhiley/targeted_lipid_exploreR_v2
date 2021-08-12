@@ -21,15 +21,15 @@ dlg_message("Select the folder containing the mzML files", type = 'ok'); mzML_di
 #dlg_message("Select the mzML file created from the FIRST LTR from the run to read into R", type = 'ok'); test_spectra_1 <- MSnbase::readSRMData(file.choose(.))
 #dlg_message("Select the mzML file created from the LAST LTR from the run to read into R", type = 'ok'); test_spectra_2 <- MSnbase::readSRMData(file.choose(.))
 
-mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl("LTR", value)) %>% filter(!grepl("conditioning", value))
+mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl("LTR", value)) %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
 
 # if there are no LTR mzMLs present then the mzML filelist will return a zero value length so recreate the list for samples instead of LTRs
-if(length(mzML_filelist) == 0){
-  mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(!grepl("conditioning", value))
+if(length(mzML_filelist$value) == 0){
+  mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
 }
 
 #if >12 samples in the mzML filelist then take a quartile sample of total LTRs
-if(length(mzML_filelist) > 12) {
+if(length(mzML_filelist$value) > 12) {
 mzML_filelist_idx <- c(seq(1, nrow(mzML_filelist), by = floor(nrow(mzML_filelist)/4)), nrow(mzML_filelist))
 mzML_filelist_crop <- mzML_filelist[mzML_filelist_idx,]
 }
