@@ -28,6 +28,7 @@ total_summed_sil <- apply(lipid_exploreR_data[["individual_lipid_data_unprocesse
   add_column(lipid_exploreR_data[["individual_lipid_data_unprocessed"]]$sampleID, .before = 1) %>% 
   rename(SIL_TIC = value, sampleID = `lipid_exploreR_data[["individual_lipid_data_unprocessed"]]$sampleID`)
 
+# arrange samples into correct run order, remove blanks and conditioning runs
 total_summed_sil <- new_project_run_order %>% 
   left_join(total_summed_sil, by = "sampleID") %>% 
   arrange(injection_order) %>%
