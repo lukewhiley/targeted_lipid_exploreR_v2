@@ -51,11 +51,11 @@ tic_qc_fail_samples <- tic_qc_fail %>% filter(!grepl("LTR", sampleID)) # create 
 
 
 #visualise for reports
-total_summed_tic$removed <- "pass_qc"
-total_summed_tic$removed[total_summed_tic$sampleID %in% tic_qc_fail$sampleID] <- "removed"
+total_summed_tic$outlier <- "pass_qc"
+total_summed_tic$outlier[total_summed_tic$sampleID %in% tic_qc_fail$sampleID] <- "outlier"
 
-total_summed_tic_removed <- total_summed_tic %>% filter(grepl("removed", removed))
-total_summed_tic_pass <- total_summed_tic %>% filter(grepl("pass_qc", removed))
+total_summed_tic_outlier <- total_summed_tic %>% filter(grepl("outlier", outlier))
+total_summed_tic_pass <- total_summed_tic %>% filter(grepl("pass_qc", outlier))
 
 # create a plate list ID
 #plate_number <- unique(total_summed_tic$plateID) %>% substr(14,14) %>% unique()
@@ -123,11 +123,11 @@ y_axis_settings <- list(
 )
 
 p <- plot_ly(
-  type = "scatter", mode = "markers", data = total_summed_tic_pass, x = ~sample_idx, y = ~LOG_summed_TIC, text = ~sampleID, color = ~removed, colors = c('#1E90FF', '#FF0000'), 
+  type = "scatter", mode = "markers", data = total_summed_tic_pass, x = ~sample_idx, y = ~LOG_summed_TIC, text = ~sampleID, color = ~outlier, colors = c('#1E90FF', '#FF0000'), 
   marker = list(size = 7, color = '#1E90FF', opacity = 0.5,
                 line = list(color = '#000000',width = 1))
 ) %>% 
-  add_trace(type = "scatter", data = total_summed_tic_removed, x = ~sample_idx, y = ~LOG_summed_TIC, text = ~sampleID, color = ~removed, 
+  add_trace(type = "scatter", data = total_summed_tic_outlier, x = ~sample_idx, y = ~LOG_summed_TIC, text = ~sampleID, color = ~outlier, 
             marker = list(size = 8, color = '#FF0000')
   ) %>%
   layout(xaxis = x_axis_settings,
