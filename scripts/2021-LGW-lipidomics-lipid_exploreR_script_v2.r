@@ -29,6 +29,15 @@ while(temp_answer != "yes"){
   temp_answer <- dlgInput(paste("the user is ", user_name, "is this correct?", sep=" "), "yes/no")$res
 }
 
+temp_answer <- "blank"
+if(exists("qc_type") == TRUE){temp_answer <- dlgInput(paste(qc_type, " were used as a QC - is this correct?", sep=" "), "yes/no")$res}
+while(temp_answer != "yes"){
+  qc_type <- dlgInput("What type of quality control did you use?", "LTR/PQC/none")$res
+  lipid_exploreR_data[["qc_type"]] <- qc_type
+  temp_answer <- dlgInput(paste(qc_type, " were used as a QC - is this correct?", sep=" "), "yes/no")$res
+}
+
+
 # read in master data
 temp_answer <- "blank"
 while(temp_answer != "yes" & temp_answer != "no"){
