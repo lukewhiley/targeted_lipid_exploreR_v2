@@ -69,7 +69,7 @@ sil_qc_fail_samples <- sil_qc_fail %>% filter(!grepl(paste0(qc_type), sampleID))
 total_summed_sil$outlier <- "pass_qc"
 total_summed_sil$outlier[total_summed_sil$sampleID %in% sil_qc_fail$sampleID] <- "outlier"
 
-total_summed_sil_removed <- total_summed_sil %>% filter(grepl("outlier", outlier))
+total_summed_sil_outlier <- total_summed_sil %>% filter(grepl("outlier", outlier))
 total_summed_sil_pass <- total_summed_sil %>% filter(grepl("pass_qc", outlier))
 
 # create a plate list ID
@@ -143,7 +143,7 @@ p <- plot_ly(
   marker = list(size = 7, color = '#1E90FF', opacity = 0.5,
                 line = list(color = '#000000',width = 1))
  ) %>% 
-  add_trace(type = "scatter", data = total_summed_sil_removed, x = ~sample_idx, y = ~LOG_SIL_TIC, text = ~sampleID, color = ~outlier, 
+  add_trace(type = "scatter", data = total_summed_sil_outlier, x = ~sample_idx, y = ~LOG_SIL_TIC, text = ~sampleID, color = ~outlier, 
             marker = list(size = 8, color = '#FF0000')
             ) %>%
   layout(xaxis = x_axis_settings,
