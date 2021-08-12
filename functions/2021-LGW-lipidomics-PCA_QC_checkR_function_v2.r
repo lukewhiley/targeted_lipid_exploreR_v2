@@ -125,7 +125,7 @@ lipids_pca_ltr <- function(FUNC_individual_multivariate_data, FUNC_family_multiv
                                margin = c(0.05, 0.05, 0.01, 0.01),
                                titleX = TRUE,
                                titleY = TRUE
-                               ) %>% layout(showlegend = FALSE, title =  "")
+                               ) %>% layout(showlegend = TRUE, title =  "")
     
     pca_plot_list <- c(list(combined_plotly))
     #print(pca_plot_list)
