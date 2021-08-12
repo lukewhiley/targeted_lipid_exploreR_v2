@@ -9,6 +9,7 @@ dlg_message("Please select your project folder", type = 'ok'); project_dir <- rs
 #pop-up user input here for project name and user initials
 if(exists("project_name") != TRUE){project_name <- dlgInput("what is the name of the project?", "example_project")$res}
 if(exists("user_name") != TRUE){user_name <- dlgInput("Insert your initials", "example_initials")$res}
+quality_control_type <- dlgInput("What type of quality control did you use?", "LTR/PQC/none")$res
 
 # read in lipid MS target transition information file
 dlg_message("please select your lipid MS target transition information file", type = 'ok'); transition_metadata <- read_csv(file.choose(.))
@@ -21,7 +22,7 @@ dlg_message("Select the folder containing the mzML files", type = 'ok'); mzML_di
 #dlg_message("Select the mzML file created from the FIRST LTR from the run to read into R", type = 'ok'); test_spectra_1 <- MSnbase::readSRMData(file.choose(.))
 #dlg_message("Select the mzML file created from the LAST LTR from the run to read into R", type = 'ok'); test_spectra_2 <- MSnbase::readSRMData(file.choose(.))
 
-mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl("LTR", value)) %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
+mzML_filelist <- list.files(mzML_directory, pattern = ".mzML") %>% as_tibble() %>% filter(grepl(paste0(quality_control_type), value)) %>% filter(!grepl("conditioning", value)) %>% filter(!grepl("blank", value))
 
 # if there are no LTR mzMLs present then the mzML filelist will return a zero value length so recreate the list for samples instead of LTRs
 if(length(mzML_filelist$value) == 0){
