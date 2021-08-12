@@ -158,16 +158,16 @@ temp_answer <- "blank"
 
 if(workflow_choice == "default"){
   temp_answer <- "all"
-  dlg_message(paste0(nrow(tic_qc_fail), "  samples FAILED the TIC QC check  ", nrow(tic_qc_fail_ltr),"  were LTRs.  These have been removed from the dataset."), 
+  dlg_message(paste0(nrow(tic_qc_fail), "  samples FAILED the TIC QC check  ", nrow(tic_qc_fail_ltr),"  were ", paste0(qc_type),  ". These have been removed from the dataset."), 
               type = 'ok')
 }
 
-while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & temp_answer != "LTR"){
-  temp_answer <- dlgInput(paste("of the ", nrow(tic_qc_fail), "FAILED samples.  ",  nrow(tic_qc_fail_ltr),"  were LTRs.  Do you want to remove failed samples?"), "all/none/samples/LTR")$res
+while(temp_answer != "all" & temp_answer != "none" & temp_answer != "samples" & temp_answer != paste0(qc_type)){
+  temp_answer <- dlgInput(paste("of the ", nrow(tic_qc_fail), "FAILED samples.  ",  nrow(tic_qc_fail_ltr),"  were ", paste0(qc_type),  ".  Do you want to remove failed samples?"), paste0("all/none/samples/", qc_type))$res
 }
 
 if(temp_answer == "all"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail$sampleID)}
 if(temp_answer == "samples"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail_samples$sampleID)}
-if(temp_answer == "LTR"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
+if(temp_answer == paste0(qc_type)){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]] %>% filter(!sampleID %in% tic_qc_fail_ltr$sampleID)}
 if(temp_answer == "none"){lipid_exploreR_data[["individual_lipid_data_sil_tic_filtered"]] <- lipid_exploreR_data[["individual_lipid_data_sil_filtered"]]}
 
