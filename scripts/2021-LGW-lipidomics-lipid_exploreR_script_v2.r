@@ -1,10 +1,9 @@
 # ######### read in data etc
 
-
 dlg_message("Please select your project folder", type = 'ok'); project_dir <- rstudioapi::selectDirectory() # save project directory root location
 setwd(project_dir) # switch the project directory
 
-# set list to store data thoughout lipidexploreR
+# set list to store data throughout lipidexploreR
 lipid_exploreR_data <- list()
 
 # create a new directory to store html widgets
@@ -82,6 +81,7 @@ if(temp_answer == "no"){
   dlg_message("OK. Please upload a worklist template csv file now. It will need 3x columns: sampleID, PlateID and injection_order. A template file has been created in your project directory (run_order_template.csv)", type = 'ok')
   temp_tibble <- project_run_order
   temp_tibble$injection_order <- NA
+  temp_tibble$plateID <- "plate_x"
   write_csv(temp_tibble, 
             file = paste(project_dir, "/", Sys.Date(), "_run_order_template.csv", sep=""))
   dlg_message("Select this file now", type = 'ok')
