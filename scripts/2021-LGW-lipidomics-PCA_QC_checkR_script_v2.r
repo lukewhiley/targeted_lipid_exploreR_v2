@@ -2,10 +2,10 @@
 
 #label data
 rsd_filtered_data$sample_class <- "sample"
-rsd_filtered_data$sample_class[grep("LTR", rsd_filtered_data$sampleID)] <- "LTR"
+rsd_filtered_data$sample_class[grep(paste0(qc_type), rsd_filtered_data$sampleID)] <- paste0(qc_type)
 
 rsd_filtered_class_data$sample_class <- "sample"
-rsd_filtered_class_data$sample_class[grep("LTR", rsd_filtered_class_data$sampleID)] <- "LTR"
+rsd_filtered_class_data$sample_class[grep(paste0(qc_type), rsd_filtered_class_data$sampleID)] <- paste0(qc_type)
 
 #run function
 pca_check_status <- "change"

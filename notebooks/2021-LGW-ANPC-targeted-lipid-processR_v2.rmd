@@ -183,8 +183,7 @@ print(paste0("Intensity check complete for ", project_name,  ": ", length(lipid_
 SIL normalization:
   -> Creates response ratio of target lipid with internal standard of choice
   -> Requires template describing IS target relationships with following column headers
-    -> 
-  -> Evaluates target/internal standard ratios in QC samples (for ANPC uses LTR)
+  -> Evaluates target/internal standard ratios in QC samples (for ANPC uses LTR or PQC samples in plots)
   -> Creates interactive visualizations of summed ratios (both total dataset and per lipid class)
   
 ```{r, SIL internal standard normalizeR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}

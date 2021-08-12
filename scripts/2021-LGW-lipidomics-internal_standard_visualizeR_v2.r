@@ -2,16 +2,16 @@
 
 ltr_rsd <- apply(as_tibble(colnames(ratio_data %>% select(contains("(")))), 1, function(FUNC_LTR_RSD){
   #browser()
-  func_data <- ratio_data %>% filter(grepl("LTR", sampleID)) %>% select(all_of(FUNC_LTR_RSD))
+  func_data <- ratio_data %>% filter(grepl(paste0(qc_type), sampleID)) %>% select(all_of(FUNC_LTR_RSD))
   (sd(func_data$value)*100)/mean(func_data$value)
 }) %>% as_tibble() %>% add_column(colnames(ratio_data %>% select(contains("("))), .before = 1)
 
 colnames(ltr_rsd) <- c("lipid", "RSD")
-dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had a LTR RSD of > 30% so were removed from the dataset", sep=""))
-dlg_message(paste("number of feature ratios with with an LTR RSD of <30% =", length(which(ltr_rsd$RSD < 30))), type = 'ok')
-dlg_message(paste("number of feature ratios with with an LTR RSD of <20% =", length(which(ltr_rsd$RSD < 20))), type = 'ok')
-dlg_message(paste("number of feature ratios with with an LTR RSD of <15% =", length(which(ltr_rsd$RSD < 15))), type = 'ok')
-dlg_message(paste("number of feature ratios with with an LTR RSD of <10% =", length(which(ltr_rsd$RSD < 10))), type = 'ok')
+dlg_message(paste(nrow(ltr_rsd)-length(which(ltr_rsd$RSD < 30)), " lipid targets had an RSD in ", paste0(qc_type), " of > 30% so were removed from the dataset", sep=""))
+dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <30% =", length(which(ltr_rsd$RSD < 30))), type = 'ok')
+dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <20% =", length(which(ltr_rsd$RSD < 20))), type = 'ok')
+dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <15% =", length(which(ltr_rsd$RSD < 15))), type = 'ok')
+dlg_message(paste("number of feature ratios with with an RSD in ", paste0(qc_type), " of <10% =", length(which(ltr_rsd$RSD < 10))), type = 'ok')
 
 lipid_keep_list <- ltr_rsd %>% filter(RSD < 30)
 
@@ -35,13 +35,13 @@ total_summed_ratio$sample_idx <- c(1:nrow(total_summed_ratio))
 #sd(total_summed_ratio$summed_TIC*100)/mean(total_summed_ratio$summed_TIC)
 
 total_summed_ratio$sample <- "sample"
-total_summed_ratio$sample[grep("LTR", total_summed_ratio$sampleID)] <- "LTR"
+total_summed_ratio$sample[grep(paste0(qc_type), total_summed_ratio$sampleID)] <- paste0(qc_type)
 
 # create a plotly plot to visualize
 total_summed_ratio$log_summed_TIC <- log(total_summed_ratio$summed_TIC+1)
 
-total_summed_ratio_samples <- total_summed_ratio %>% filter(!grepl("LTR", sampleID))
-total_summed_ratio_LTR <- total_summed_ratio %>% filter(grepl("LTR", sampleID))
+total_summed_ratio_samples <- total_summed_ratio %>% filter(!grepl(paste0(qc_type), sampleID))
+total_summed_ratio_LTR <- total_summed_ratio %>% filter(grepl(paste0(qc_type), sampleID))
 
 # create a plate list ID
 plate_number <- unique(plateID) 
@@ -125,19 +125,19 @@ lipid_class_list <- lipid_class_list[!grepl("sampleID", lipid_class_list)] %>% a
 
 #add ltr TRUE/FALSE column
 
-rsd_filtered_class_data$is_ltr <- "sample"
-rsd_filtered_class_data$is_ltr[grep("LTR", rsd_filtered_class_data$sampleID)] <- "LTR"
+rsd_filtered_class_data$is_qc <- "sample"
+rsd_filtered_class_data$is_qc[grep(paste0(qc_type), rsd_filtered_class_data$sampleID)] <- paste0(qc_type)
 
 plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
   #browser()
-  plot_data <- rsd_filtered_class_data %>% select("sampleID", "is_ltr", all_of(lipidClass)) %>% rename(ms_response = value) 
+  plot_data <- rsd_filtered_class_data %>% select("sampleID", "is_qc", all_of(lipidClass)) %>% rename(ms_response = value) 
   plate_id <- str_extract(plot_data$sampleID, "PLIP.*")
   plate_id <- substr(plate_id, 0,15)
   plot_data$sample_index <- paste(plate_id, sub(".*\\_", "", plot_data$sampleID), sep="_")
   plot_data$sample_idx <- 1:nrow(plot_data)
   
-  plot_data_ltr <- plot_data %>% filter(is_ltr == "LTR")
-  plot_data <- plot_data %>% filter(is_ltr == "sample")
+  plot_data_ltr <- plot_data %>% filter(is_qc == paste0(qc_type))
+  plot_data <- plot_data %>% filter(is_qc == "sample")
   
   # plateIDx <- lapply(unique(plateID), function(FUNC_plateID){
   #   #browser()
@@ -199,12 +199,12 @@ plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
   
   #browser()
   p <- plot_ly(
-    type = "scatter", mode = "markers",  colors = c('#1E90FF', '#FF0000'), data = plot_data, x = ~sample_idx, y = ~log(ms_response+1), text = ~sampleID, color = ~is_ltr, 
+    type = "scatter", mode = "markers",  colors = c('#1E90FF', '#FF0000'), data = plot_data, x = ~sample_idx, y = ~log(ms_response+1), text = ~sampleID, color = ~is_qc, 
     marker = list(size = 5, color = '#1E90FF', opacity = 0.5,
                   line = list(color = '#000000',width = 1)),
     showlegend = FALSE
   ) %>% 
-    add_trace(type = "scatter", data = plot_data_ltr, x = ~sample_idx, y = ~log(ms_response+1), text = ~sampleID, color = ~is_ltr, 
+    add_trace(type = "scatter", data = plot_data_ltr, x = ~sample_idx, y = ~log(ms_response+1), text = ~sampleID, color = ~is_qc, 
               marker = list(size = 6, color = '#FF0000'),
               showlegend = FALSE
     ) %>%

@@ -104,7 +104,7 @@ sil_list_warning$reason_for_flag <- "missing value in sample - check skyline"
 
 # looks at SIL in LTR only for signal (area) %RSD across the LTRs
 sil_data_check_ltr <- sil_data_for_normalisation %>% 
-  filter(grepl("LTR", sampleID))
+  filter(grepl(paste0(qc_type), sampleID))
 
 sil_rsd <- lapply(sil_list$note, function(FUNC_SIL){
   #browser()
