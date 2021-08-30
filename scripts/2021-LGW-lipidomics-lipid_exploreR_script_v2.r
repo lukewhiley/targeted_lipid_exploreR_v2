@@ -3,7 +3,7 @@
 dlg_message("Please select your project folder", type = 'ok'); project_dir <- rstudioapi::selectDirectory() # save project directory root location
 setwd(project_dir) # switch the project directory
 
-# set list to store data throughout lipidexploreR
+# set list to store data throughout lipid_exploreR
 lipid_exploreR_data <- list()
 
 # create a new directory to store html widgets
