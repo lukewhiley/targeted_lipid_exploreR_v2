@@ -182,7 +182,7 @@ corr_out$lipid <- gsub(".x", "", corr_out$lipid)
 
 
 corr_filter_list <- corr_out %>%
-  filter(r_value > 0.85)
+  filter(r_value > 0.75)
   
 #select corrected data to those lipids that are correlated with > 0.85 to ratio data alone 
 signal_drift_corrected_data <- signal_drift_corrected_data %>% 
