@@ -56,7 +56,7 @@ write_csv(x = sil_trend_cor_meta_2,
 #create data for statTarget::shiftCor
 sil_trend_cor_data <- sil_trend
 colnames(sil_trend_cor_data) <- gsub("[():]", "_", colnames(sil_trend_cor_data))
-sil_trend_cor_data <- sil_trend_cor_meta %>% select(sampleID, sample) %>% right_join(sil_trend_cor_data, by = 'sampleID') %>% select(-sampleID)
+sil_trend_cor_data <- sil_trend_cor_meta %>% select(sampleID, sample) %>% right_join(sil_trend_cor_data, by = 'sampleID') %>% select(sample, contains("_"))
 sil_trend_cor_data_2 <- as_tibble(cbind(nms = names(sil_trend_cor_data), t(sil_trend_cor_data)))
 colnames(sil_trend_cor_data_2) <- sil_trend_cor_data_2[1,]
 sil_trend_cor_data_2 <- sil_trend_cor_data_2[-1,]
