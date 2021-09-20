@@ -47,16 +47,20 @@ for(mzML_idx in 1:nrow(mzML_filelist_crop)){
   
   rt_find <- NULL
   for (transition_idx in 1:nrow(test_spectra)){
-    precursor_mz <- test_spectra[transition_idx,]@precursorMz[1]
-    product_mz <- test_spectra[transition_idx,]@productMz[1]
+    precursor_mz <- test_spectra[transition_idx,]@precursorMz[1] %>% round(2)
+    product_mz <- test_spectra[transition_idx,]@productMz[1] %>% round(2)
     #if(precursor_mz == 614.6){print(transition_idx)}
     max_intensity_idx <- which(test_spectra[transition_idx,]@intensity == max(test_spectra[transition_idx,]@intensity)) %>% median()
     #max_intensity_idx_2 <- which(test_spectra_2[transition_idx,]@intensity == max(test_spectra_2[transition_idx,]@intensity)) %>% median()
     scans_in_window <- length(test_spectra[transition_idx,]@rtime)
     #scans_in_window_2 <- length(test_spectra_1[transition_idx,]@rtime)
     apex_rt <- test_spectra[transition_idx,]@rtime[max_intensity_idx]
-    precursor_name <- transition_metadata$precursor_name[which(transition_metadata$precursor_mz == precursor_mz & transition_metadata$product_mz == product_mz)] %>% unique()
+    precursor_name <- transition_metadata$precursor_name[which(round(transition_metadata$precursor_mz,2) == precursor_mz & round(transition_metadata$product_mz,2) == product_mz)] %>% unique()
+    if(length(precursor_name) == 1){
     rt_find <- rbind(rt_find, c(precursor_name, round(apex_rt,2)))
+    }
+    #print(rt_find)
+    #Sys.sleep(1)
   }
   
   if(mzML_idx == 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0(qc_type,"_", mzML_idx)))}
