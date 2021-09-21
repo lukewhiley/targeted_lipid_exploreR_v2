@@ -56,8 +56,11 @@ while(sil_check_status == "change"){
  
   median_sil_tic <- median(total_summed_sil$SIL_TIC)
 
-  sil_cut_off_lower <- median_sil_tic - (median_sil_tic*as.numeric(temp_answer)/100)
-  sil_cut_off_upper <- median_sil_tic + (median_sil_tic*as.numeric(temp_answer)/100)
+  #sil_cut_off_lower <- median_sil_tic - (median_sil_tic*as.numeric(temp_answer)/100)
+  #sil_cut_off_upper <- median_sil_tic + (median_sil_tic*as.numeric(temp_answer)/100)
+  
+  sil_cut_off_lower <- boxplot.stats(x = total_summed_sil$SIL_TIC, coef = 1.5)$stats[1]
+  sil_cut_off_upper <- boxplot.stats(x = total_summed_sil$SIL_TIC, coef = 1.5)$stats[5]
 
 #create lists of which samples have failed the SIL internal standard check
   #for both upper and lower filter
