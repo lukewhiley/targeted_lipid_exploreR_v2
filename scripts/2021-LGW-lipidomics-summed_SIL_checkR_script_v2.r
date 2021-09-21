@@ -59,15 +59,15 @@ while(sil_check_status == "change"){
   #sil_cut_off_lower <- median_sil_tic - (median_sil_tic*as.numeric(temp_answer)/100)
   #sil_cut_off_upper <- median_sil_tic + (median_sil_tic*as.numeric(temp_answer)/100)
   
-  sil_cut_off_lower <- boxplot.stats(x = total_summed_sil$SIL_TIC, coef = 1.5)$stats[1]
-  sil_cut_off_upper <- boxplot.stats(x = total_summed_sil$SIL_TIC, coef = 1.5)$stats[5]
+  sil_cut_off_lower <- boxplot.stats(x = log(total_summed_sil$SIL_TIC), coef = 2)$stats[1]
+  sil_cut_off_upper <- boxplot.stats(x = log(total_summed_sil$SIL_TIC), coef = 2)$stats[5]
 
 #create lists of which samples have failed the SIL internal standard check
   #for both upper and lower filter
   
 #sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower | total_summed_sil$SIL_TIC > sil_cut_off_upper)] %>% as_tibble %>% rename(sampleID = value)
   #just lower filter
-  sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
+  sil_qc_fail <- total_summed_sil$sampleID[which(log(total_summed_sil$SIL_TIC) < sil_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
 sil_qc_fail$fail_point <- "sil"
 sil_qc_fail_ltr <- sil_qc_fail %>% filter(grepl(paste0(qc_type), sampleID))
 sil_qc_fail_samples <- sil_qc_fail %>% filter(!grepl(paste0(qc_type), sampleID))
@@ -90,16 +90,20 @@ plateIDx <- lapply(unique(total_summed_sil$plateID), function(FUNC_plateID){
 
 #set y axis limits
 if(sil_cut_off_lower < min(total_summed_sil$SIL_TIC)){
-  y_limit_lower <- log(sil_cut_off_lower-(sil_cut_off_lower/100*25))
+  #y_limit_lower <- log(sil_cut_off_lower-(sil_cut_off_lower/100*25))
+  y_limit_lower <- sil_cut_off_lower-(sil_cut_off_lower/100*25)
 }
 if(sil_cut_off_lower > min(total_summed_sil$SIL_TIC)){
-  y_limit_lower <- log(min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25))
+  #y_limit_lower <- log(min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25))
+  y_limit_lower <- min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25)
 }
 if(sil_cut_off_upper > max(total_summed_sil$SIL_TIC)){
-  y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+  #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+  y_limit_upper <- max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25)
 }
 if(sil_cut_off_upper < max(total_summed_sil$SIL_TIC)){
-  y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+  #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+  y_limit_upper <- max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25)
 }
 
 # create a layout list of extra lines to add
