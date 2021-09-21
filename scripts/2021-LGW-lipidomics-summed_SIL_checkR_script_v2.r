@@ -60,7 +60,11 @@ while(sil_check_status == "change"){
   sil_cut_off_upper <- median_sil_tic + (median_sil_tic*as.numeric(temp_answer)/100)
 
 #create lists of which samples have failed the SIL internal standard check
-sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower | total_summed_sil$SIL_TIC > sil_cut_off_upper)] %>% as_tibble %>% rename(sampleID = value)
+  #for both upper and lower filter
+  
+#sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower | total_summed_sil$SIL_TIC > sil_cut_off_upper)] %>% as_tibble %>% rename(sampleID = value)
+  #just lower filter
+  sil_qc_fail <- total_summed_sil$sampleID[which(total_summed_sil$SIL_TIC < sil_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
 sil_qc_fail$fail_point <- "sil"
 sil_qc_fail_ltr <- sil_qc_fail %>% filter(grepl(paste0(qc_type), sampleID))
 sil_qc_fail_samples <- sil_qc_fail %>% filter(!grepl(paste0(qc_type), sampleID))
