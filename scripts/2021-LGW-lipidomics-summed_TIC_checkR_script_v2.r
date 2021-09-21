@@ -43,7 +43,7 @@ while(tic_check_status == "change"){
   median_summed_tic <- median(total_summed_tic$summed_TIC)
   #tic_cut_off_lower <- median_summed_tic - (median_summed_tic*as.numeric(temp_answer)/100)
   
-  tic_cut_off_lower <- boxplot.stats(x = log(total_summed_tic$SIL_TIC), coef = 3)$stats[1]
+  tic_cut_off_lower <- boxplot.stats(x = log(total_summed_tic$summedL_TIC), coef = 3)$stats[1]
 
 
 tic_qc_fail <- total_summed_tic$sampleID[which(log(total_summed_tic$summed_TIC) < tic_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
