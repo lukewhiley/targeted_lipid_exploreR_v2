@@ -100,7 +100,7 @@ x_axis_settings <- list(
   linecolor = toRGB("black"),
   linewidth = 2,
   showgrid = FALSE,
-  range = c(0, max(total_summed_ratio_samples$sample_idx)),
+  range = c(0, max(total_summed_ratio_samples$sample_idx)+10),
   title = "Sample index"
 )
 
@@ -201,7 +201,7 @@ plotlist <- apply(lipid_class_list %>% select(value), 1, function(lipidClass){
     linecolor = toRGB("black"),
     linewidth = 2,
     showgrid = FALSE,
-    range = c(0, xmax+1),
+    range = c(0, xmax+10),
     title=""
     #title = paste(lipidClass)
   )
