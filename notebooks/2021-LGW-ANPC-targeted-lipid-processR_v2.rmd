@@ -114,7 +114,10 @@ lipid_exploreR_script <- GET(url = paste0(parent_github_url, "/scripts/2021-LGW-
 eval(parse(text = lipid_exploreR_script), envir = .GlobalEnv)
 rm(lipid_exploreR_script)
 
-print(paste0("Succesfully imported ", project_name, ": ", nrow(lipid_exploreR_data$individual_lipid_data_unprocessed), " samples; ", ncol(lipid_exploreR_data$individual_lipid_data_unprocessed)-3, " lipids"))
+print(paste0("Succesfully imported ", project_name, ": ", 
+             plateID %>% unique() %>% length(), " plates; ", 
+             nrow(lipid_exploreR_data$individual_lipid_data_unprocessed), " samples; ",
+             ncol(lipid_exploreR_data$individual_lipid_data_unprocessed)-3, " lipids"))
 
 ```
 
