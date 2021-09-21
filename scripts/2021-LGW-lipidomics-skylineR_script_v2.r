@@ -155,7 +155,7 @@ results_2_ltr$area <- sapply(results_2_ltr$area, as.numeric) #ensure area column
 
 rt_boundary_output <- lapply(metabolite_target_list$precursor_name, function(FUNC_LIPID){
   #browser()
-  print(FUNC_LIPID)
+  #print(FUNC_LIPID)
   rt_boundary <-  filter(results_2_ltr, precursor_name == FUNC_LIPID) %>% filter(!is.na(area)) %>% filter(!grepl("conditioning", replicate)) %>% arrange(retention_time)
   if(nrow(rt_boundary) > 0) {
   start_time <- rt_boundary %>% select(start_time) %>% sapply(as.numeric) %>% min()
