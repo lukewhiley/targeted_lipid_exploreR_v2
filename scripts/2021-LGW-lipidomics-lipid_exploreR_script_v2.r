@@ -127,7 +127,7 @@ lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- lipid_exploreR_dat
 colnames(lipid_exploreR_data[["individual_lipid_data_unprocessed"]])[3] <- "run_order"
 
 
-lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!grepl("conditioning", sampleID))
+lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% filter(!grepl("conditioning", sampleID)) %>% filter(!grepl("COND", sampleID)) %>% filter(!grepl("COND", sampleID))
 class_lipid_data <- create_lipid_class_data_summed(lipid_exploreR_data[["individual_lipid_data_unprocessed"]])
 
 new_project_run_order <- new_project_run_order %>% filter(!grepl("conditioning", sampleID))
