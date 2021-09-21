@@ -47,7 +47,7 @@ while(sil_check_status == "change"){
   temp_answer <- "blank"
   
   if(workflow_choice == "default"){
-    temp_answer <- 50
+    temp_answer <- 75
   }
 
  while(is.na(as.numeric(temp_answer))){
