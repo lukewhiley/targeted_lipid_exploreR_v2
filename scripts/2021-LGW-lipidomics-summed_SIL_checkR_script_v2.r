@@ -147,8 +147,8 @@ y_axis_settings <- list(
   linewidth = 2,
   showgrid = TRUE,
   title = "Lipid total ion count (Log)",
-  range = c(total_summed_sil$LOG_SIL_TIC %>% min() * 0.8, 
-            total_summed_sil$LOG_SIL_TIC %>% max() * 1.2)
+  range = c(total_summed_sil$LOG_SIL_TIC %>% min() * 0.9, 
+            total_summed_sil$LOG_SIL_TIC %>% max() * 1.1)
 )
 
 p <- plot_ly(
