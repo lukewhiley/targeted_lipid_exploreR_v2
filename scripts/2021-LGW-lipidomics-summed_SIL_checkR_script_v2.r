@@ -108,6 +108,9 @@ plateIDx <- lapply(unique(total_summed_sil$plateID), function(FUNC_plateID){
 #   y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
 # }
 
+y_limit_lower <- total_summed_sil$LOG_SIL_TIC %>% min() * 0.8
+y_limit_upper <- total_summed_sil$LOG_SIL_TIC %>% max() * 1.1
+
 # create a layout list of extra lines to add
 p_threshold_lines <- list(list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=sil_cut_off_lower, y1=sil_cut_off_lower,
                           line=list(dash='dot', width=3, color = '#FF0000')),
@@ -147,8 +150,8 @@ y_axis_settings <- list(
   linewidth = 2,
   showgrid = TRUE,
   title = "Lipid total ion count (Log)",
-  range = c(total_summed_sil$LOG_SIL_TIC %>% min() * 0.8, 
-            total_summed_sil$LOG_SIL_TIC %>% max() * 1.1)
+  range = c(y_limit_lower, 
+            y_limit_upper)
 )
 
 p <- plot_ly(
