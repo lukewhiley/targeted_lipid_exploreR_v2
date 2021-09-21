@@ -122,7 +122,8 @@ QC check 1:
   -> Selects and sums all of the stable isotope labeled (SIL) internal standards 
   -> creates interactive plot of the result
   -> If SIL internal standards have been added correctly they should be within x% from the median. 
-  -> Default is 50% cut-off - if in custom mode edit as appropriate
+  -> Default is 75% cut-off - if in custom mode edit as appropriate
+  -> should be used for obvious outliers only
   
 
 ```{r, summed_SIL_checkR,  eval = FALSE, echo = FALSE, results = FALSE, warning=FALSE, message=FALSE}
@@ -143,7 +144,7 @@ QC check 2:
   -> Selects and sums all of the lipid targets that are not SIL internal standards 
   -> creates interactive plot of the result
   -> If sample has had correct volume added to plate wells they should be within x% from the median. 
-  -> Default is 50% cut-off 
+  -> Default is 75% cut-off 
   -> if in custom mode please edit as appropriate
   -> used for obvious outliers
   
