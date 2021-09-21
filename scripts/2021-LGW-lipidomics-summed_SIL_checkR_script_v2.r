@@ -99,11 +99,11 @@ if(sil_cut_off_lower > min(total_summed_sil$SIL_TIC)){
 }
 if(sil_cut_off_upper > max(total_summed_sil$SIL_TIC)){
   #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
-  y_limit_upper <- max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25)
+  y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
 }
 if(sil_cut_off_upper < max(total_summed_sil$SIL_TIC)){
   #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
-  y_limit_upper <- max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25)
+  y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
 }
 
 # create a layout list of extra lines to add
