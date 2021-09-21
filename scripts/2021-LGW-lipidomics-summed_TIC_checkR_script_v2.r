@@ -41,10 +41,12 @@ while(tic_check_status == "change"){
   median_summed_tic <- median(total_summed_tic$summed_TIC)
   
   median_summed_tic <- median(total_summed_tic$summed_TIC)
-  tic_cut_off_lower <- median_summed_tic - (median_summed_tic*as.numeric(temp_answer)/100)
+  #tic_cut_off_lower <- median_summed_tic - (median_summed_tic*as.numeric(temp_answer)/100)
+  
+  tic_cut_off_lower <- boxplot.stats(x = log(total_summed_tic$SIL_TIC), coef = 3)$stats[1]
 
 
-tic_qc_fail <- total_summed_tic$sampleID[which(total_summed_tic$summed_TIC < tic_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
+tic_qc_fail <- total_summed_tic$sampleID[which(log(total_summed_tic$summed_TIC) < tic_cut_off_lower)] %>% as_tibble %>% rename(sampleID = value)
 tic_qc_fail$fail_point <- "tic"
 tic_qc_fail_ltr <- tic_qc_fail %>% filter(grepl("LTR", sampleID))# create tibble of failed LTRs
 tic_qc_fail_samples <- tic_qc_fail %>% filter(!grepl("LTR", sampleID)) # create tibble of failed samples (not LTRS)
@@ -63,15 +65,15 @@ plateIDx <- lapply(unique(total_summed_tic$plateID), function(FUNC_plateID){
   #browser()
   grep(FUNC_plateID, total_summed_tic$plateID)[1]}) %>% unlist()
 
-#set y axis limits
-if(tic_cut_off_lower < min(total_summed_tic$summed_TIC)){
-  y_limit_lower <- log(tic_cut_off_lower-(tic_cut_off_lower/100*25))
-}
-if(tic_cut_off_lower > min(total_summed_tic$summed_TIC)){
-  y_limit_lower <- log(min(total_summed_tic$summed_TIC)-(min(total_summed_tic$summed_TIC)/100*25))
-}
-
-y_limit_upper <- log(max(total_summed_tic$summed_TIC)+(max(total_summed_tic$summed_TIC)/100*25))
+# #set y axis limits
+# if(tic_cut_off_lower < min(total_summed_tic$summed_TIC)){
+#   y_limit_lower <- log(tic_cut_off_lower-(tic_cut_off_lower/100*25))
+# }
+# if(tic_cut_off_lower > min(total_summed_tic$summed_TIC)){
+#   y_limit_lower <- log(min(total_summed_tic$summed_TIC)-(min(total_summed_tic$summed_TIC)/100*25))
+# }
+# 
+# y_limit_upper <- log(max(total_summed_tic$summed_TIC)+(max(total_summed_tic$summed_TIC)/100*25))
 
 
 
@@ -107,7 +109,7 @@ x_axis_settings <- list(
   linecolor = toRGB("black"),
   linewidth = 2,
   showgrid = FALSE,
-  range = c(0, max(total_summed_tic$sample_idx)+1),
+  range = c(0, max(total_summed_tic$sample_idx)+10),
   title = "Sample index"
 )
 
@@ -117,8 +119,8 @@ y_axis_settings <- list(
   linecolor = toRGB("black"),
   linewidth = 2,
   showgrid = TRUE,
-  range = c(y_limit_lower-log(median_summed_tic)*0.1, 
-            y_limit_upper),
+  range = c(total_summed_tic$LOG_summed_TIC %>% min() * 0.8, 
+            total_summed_tic$LOG_summed_TIC %>% max() * 1.1),
   title = "Lipid total ion count (Log)"
 )
 
