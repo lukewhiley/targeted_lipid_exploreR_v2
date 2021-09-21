@@ -107,7 +107,7 @@ for(idx_ro in 1:nrow(new_project_run_order)){
   lipid_exploreR_data[["individual_lipid_data_unprocessed"]]$plateID[grep(new_project_run_order$sampleID[idx_ro], lipid_exploreR_data[["individual_lipid_data_unprocessed"]]$sampleID)] <- new_project_run_order$plateID[idx_ro]
 }
 
-lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% arrange(run_order)
+lipid_exploreR_data[["individual_lipid_data_unprocessed"]] <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% arrange(run_order) %>% filter(!is.na(run_order))
 
 new_project_run_order <- lipid_exploreR_data[["individual_lipid_data_unprocessed"]] %>% select(sampleID, plateID, run_order)
 colnames(new_project_run_order) <- c("sampleID", "plateID", "injection_order")
