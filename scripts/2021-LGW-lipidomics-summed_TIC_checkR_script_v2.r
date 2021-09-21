@@ -75,6 +75,8 @@ plateIDx <- lapply(unique(total_summed_tic$plateID), function(FUNC_plateID){
 # 
 # y_limit_upper <- log(max(total_summed_tic$summed_TIC)+(max(total_summed_tic$summed_TIC)/100*25))
 
+y_limit_lower <- total_summed_tic$LOG_summed_TIC %>% min() * 0.8
+y_limit_upper <- total_summed_tic$LOG_summed_TIC %>% max() * 1.1
 
 
 # create a layout list of extra lines to add
@@ -119,8 +121,8 @@ y_axis_settings <- list(
   linecolor = toRGB("black"),
   linewidth = 2,
   showgrid = TRUE,
-  range = c(total_summed_tic$LOG_summed_TIC %>% min() * 0.8, 
-            total_summed_tic$LOG_summed_TIC %>% max() * 1.1),
+  range = c(y_limit_lower, 
+            y_limit_upper),
   title = "Lipid total ion count (Log)"
 )
 
