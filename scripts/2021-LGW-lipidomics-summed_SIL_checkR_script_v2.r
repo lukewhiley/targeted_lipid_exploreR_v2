@@ -109,9 +109,9 @@ y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SI
 # }
 
 # create a layout list of extra lines to add
-p_threshold_lines <- list(list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=log(sil_cut_off_lower), y1=log(sil_cut_off_lower),
+p_threshold_lines <- list(list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=sil_cut_off_lower, y1=sil_cut_off_lower,
                           line=list(dash='dot', width=3, color = '#FF0000')),
-                     list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=log(sil_cut_off_upper), y1=log(sil_cut_off_upper),
+                     list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=sil_cut_off_upper, y1=sil_cut_off_upper,
                           line=list(dash='dot', width=3, color = '#FF0000')),
                      list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=log(median_sil_tic), y1=log(median_sil_tic),
                           line=list(dash='dot', width=3, color = '#000000'))
