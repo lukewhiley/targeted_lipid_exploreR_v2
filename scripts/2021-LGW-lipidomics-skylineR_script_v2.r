@@ -12,7 +12,7 @@ if(exists("user_name") != TRUE){user_name <- dlgInput("Insert your initials", "e
 qc_type <- dlgInput("What type of quality control did you use?", "LTR/PQC/none")$res
 
 # read in lipid MS target transition information file
-dlg_message("please select your lipid MS target transition information file", type = 'ok'); transition_metadata <- read_csv(file.choose(.))
+dlg_message("please select your lipid MRM transition data file - NOTE: FOR ANPC ROUTINE PROJECTS THIS SHOULD BE TAKEN FROM THE DESKTOP SCIEX TEMPLATES FOLDER", type = 'ok'); transition_metadata <- read_csv(file.choose(.))
 transition_metadata_headers <- colnames(transition_metadata)
 transition_metadata <- clean_names(transition_metadata)
 metabolite_target_list <- transition_metadata %>% select(precursor_name)
