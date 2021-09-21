@@ -78,7 +78,7 @@ plateIDx <- lapply(unique(total_summed_tic$plateID), function(FUNC_plateID){
 
 
 # create a layout list of extra lines to add
-p_threshold_lines <- list(list(type='line', x0= min(total_summed_tic$sample_idx), x1= (max(total_summed_tic$sample_idx)+10), y0=log(tic_cut_off_lower), y1=log(tic_cut_off_lower),
+p_threshold_lines <- list(list(type='line', x0= min(total_summed_tic$sample_idx), x1= (max(total_summed_tic$sample_idx)+10), y0=tic_cut_off_lower, y1=tic_cut_off_lower,
                                line=list(dash='dot', width=3, color = '#FF0000')),
                           list(type='line', x0= min(total_summed_tic$sample_idx), x1= (max(total_summed_tic$sample_idx)+10), y0=log(median_summed_tic), y1=log(median_summed_tic),
                                line=list(dash='dot', width=3, color = '#000000'))
