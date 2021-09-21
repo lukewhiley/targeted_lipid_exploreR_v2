@@ -87,8 +87,8 @@ plateIDx <- lapply(unique(total_summed_sil$plateID), function(FUNC_plateID){
   #browser()
   grep(FUNC_plateID, total_summed_sil$plateID)[1]}) %>% unlist()
 
-y_limit_lower <- min(log(total_summed_sil$SIL_TIC))-(min(log(total_summed_sil$SIL_TIC))/100*25)
-y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
+#y_limit_lower <- min(log(total_summed_sil$SIL_TIC))-(min(log(total_summed_sil$SIL_TIC))/100*25)
+#y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
 
 # #set y axis limits
 # if(sil_cut_off_lower < min(total_summed_sil$SIL_TIC)){
@@ -136,7 +136,7 @@ x_axis_settings <- list(
   linecolor = toRGB("black"),
   linewidth = 2,
   showgrid = FALSE,
-  range = c(0, max(total_summed_sil$sample_idx)+1),
+  range = c(0, max(total_summed_sil$sample_idx)+10),
   title = "Sample index"
 )
 
@@ -147,8 +147,8 @@ y_axis_settings <- list(
   linewidth = 2,
   showgrid = TRUE,
   title = "Lipid total ion count (Log)",
-  range = c(y_limit_lower-log(median_sil_tic)*.05, 
-            y_limit_upper+log(median_sil_tic)*.05)
+  range = c(total_summed_sil$LOG_SIL_TIC %>% min() * 0.8, 
+            total_summed_sil$LOG_SIL_TIC %>% max() * 1.2)
 )
 
 p <- plot_ly(
