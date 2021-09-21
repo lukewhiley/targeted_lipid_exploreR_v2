@@ -87,24 +87,26 @@ plateIDx <- lapply(unique(total_summed_sil$plateID), function(FUNC_plateID){
   #browser()
   grep(FUNC_plateID, total_summed_sil$plateID)[1]}) %>% unlist()
 
+y_limit_lower <- min(log(total_summed_sil$SIL_TIC))-(min(log(total_summed_sil$SIL_TIC))/100*25)
+y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
 
-#set y axis limits
-if(sil_cut_off_lower < min(total_summed_sil$SIL_TIC)){
-  #y_limit_lower <- log(sil_cut_off_lower-(sil_cut_off_lower/100*25))
-  y_limit_lower <- sil_cut_off_lower-(sil_cut_off_lower/100*25)
-}
-if(sil_cut_off_lower > min(total_summed_sil$SIL_TIC)){
-  #y_limit_lower <- log(min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25))
-  y_limit_lower <- min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25)
-}
-if(sil_cut_off_upper > max(total_summed_sil$SIL_TIC)){
-  #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
-  y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
-}
-if(sil_cut_off_upper < max(total_summed_sil$SIL_TIC)){
-  #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
-  y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
-}
+# #set y axis limits
+# if(sil_cut_off_lower < min(total_summed_sil$SIL_TIC)){
+#   #y_limit_lower <- log(sil_cut_off_lower-(sil_cut_off_lower/100*25))
+#   y_limit_lower <- min(total_summed_sil$LOG_SIL_TIC)-(total_summed_sil$LOG_SIL_TIC/100*25)
+# }
+# if(sil_cut_off_lower > min(total_summed_sil$SIL_TIC)){
+#   #y_limit_lower <- log(min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25))
+#   y_limit_lower <- min(total_summed_sil$SIL_TIC)-(min(total_summed_sil$SIL_TIC)/100*25)
+# }
+# if(sil_cut_off_upper > max(total_summed_sil$SIL_TIC)){
+#   #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+#   y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
+# }
+# if(sil_cut_off_upper < max(total_summed_sil$SIL_TIC)){
+#   #y_limit_upper <- log(max(total_summed_sil$SIL_TIC)+(max(total_summed_sil$SIL_TIC)/100*25))
+#   y_limit_upper <- max(log(total_summed_sil$SIL_TIC))+(max(log(total_summed_sil$SIL_TIC))/100*25)
+# }
 
 # create a layout list of extra lines to add
 p_threshold_lines <- list(list(type='line', x0= min(total_summed_sil$sample_idx), x1= (max(total_summed_sil$sample_idx)+10), y0=log(sil_cut_off_lower), y1=log(sil_cut_off_lower),
