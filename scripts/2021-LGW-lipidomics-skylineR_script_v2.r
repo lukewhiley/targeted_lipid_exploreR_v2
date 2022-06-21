@@ -150,9 +150,18 @@ results_2 <- read_csv(file = file.choose(.))  %>%
 
 filenames <- results_2$replicate %>% unique()
 
+#filter only LTRs or PQC
+if(qc_type == "LTR"| qc_type == "PQC"){
 results_2_ltr <- results_2 %>% filter(grepl(paste0(qc_type), replicate))
-results_2_ltr$area <- sapply(results_2_ltr$area, as.numeric) #ensure area column is numeric
+}
 
+#if no LTR or PQC is present use all samples
+if(qc_type == "none"){
+  results_2_ltr <- results_2
+}
+
+
+results_2_ltr$area <- sapply(results_2_ltr$area, as.numeric) #ensure area column is numeric
 rt_boundary_output <- lapply(metabolite_target_list$precursor_name, function(FUNC_LIPID){
   #browser()
   #print(FUNC_LIPID)
