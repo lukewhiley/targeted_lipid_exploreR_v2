@@ -66,7 +66,6 @@ for(mzML_idx in 1:nrow(mzML_filelist_crop)){
   if(mzML_idx == 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0(qc_type,"_", mzML_idx)))}
   if(mzML_idx > 1){rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0(qc_type, "_", mzML_idx))) %>% left_join(rt_find_master, by = "lipid")}
   
-  #rt_find_master <-  rt_find %>% as_tibble() %>% setNames(c("lipid", paste0("LTR_", mzML_idx))) 
 }
     
 rt_find_master[,grepl(paste0(qc_type), colnames(rt_find_master))] <- sapply(rt_find_master[,grepl(paste0(qc_type), colnames(rt_find_master))], as.numeric)
